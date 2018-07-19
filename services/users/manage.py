@@ -3,10 +3,12 @@
 import unittest
 
 from flask.cli import FlaskGroup
-from project import app, db
+from project import create_app, db
+from project.api.models import User
 
+app = create_app()
 # Extend normal CLI with commands related to the Flask app
-cli = FlaskGroup(app)
+cli = FlaskGroup(create_app=create_app)
 
 
 @cli.command()
