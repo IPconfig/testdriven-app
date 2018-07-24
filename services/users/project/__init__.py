@@ -1,7 +1,7 @@
 # services/users/project/__init__.py
 
 import os
-from flask import Flask, jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 
