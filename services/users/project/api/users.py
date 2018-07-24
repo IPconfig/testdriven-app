@@ -1,12 +1,24 @@
 # services/users/project/api/users.py
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from sqlalchemy import exc
 
 from project.api.models import User
 from project import db
 
-users_blueprint = Blueprint('users', __name__)
+
+users_blueprint = Blueprint('users', __name__, template_folder='./templates')
+
+
+@users_blueprint.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        db.session.add(User(username=username, email=email))
+        db.session.commit()
+    users = User.query.all()
+    return render_template('index.html', users=users)
 
 
 @users_blueprint.route('/users/ping', methods=['GET'])
@@ -31,13 +43,10 @@ def add_user():
     try:
         user = User.query.filter_by(email=email).first()
         if not user:
-
             db.session.add(User(username=username, email=email))
             db.session.commit()
-            response_object = {
-                'status': 'success',
-                'message': f'{email} was added!'
-            }
+            response_object['status'] = 'success'
+            response_object['message'] = f'{email} was added!'
             return jsonify(response_object), 201
         else:
             response_object['message'] = 'Sorry. That email already exists.'
@@ -50,7 +59,6 @@ def add_user():
 @users_blueprint.route('/users/<user_id>', methods=['GET'])
 def get_single_user(user_id):
     """Get single user details"""
-    user = User.query.filter_by(id=user_id).first()
     response_object = {
         'status': 'fail',
         'message': 'User does not exist'
