@@ -2,6 +2,7 @@ env
 .dockerignore
 Dockerfile-dev
 Dockerfile-prod
+migrations
 
 # Unit test / coverage reports
 htmlcov/
