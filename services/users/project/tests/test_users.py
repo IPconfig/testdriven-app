@@ -162,7 +162,7 @@ class TestUserService(BaseTestCase):
         with self.client:
             response = self.client.post(
                 '/',
-                data=dict(username='justin', email='justin@fake.com', 
+                data=dict(username='justin', email='justin@fake.com',
                           password='mypassword'),
                 follow_redirects=True
             )
