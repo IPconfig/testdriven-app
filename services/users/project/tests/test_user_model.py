@@ -2,13 +2,12 @@
 
 import unittest
 
-from project.tests.base import BaseTestCase
+from sqlalchemy.exc import IntegrityError
+
 from project import db
 from project.api.models import User
+from project.tests.base import BaseTestCase
 from project.tests.utils import add_user
-
-
-from sqlalchemy.exc import IntegrityError
 
 
 class TestUserModel(BaseTestCase):
@@ -20,6 +19,7 @@ class TestUserModel(BaseTestCase):
         self.assertEqual(user.email, 'test@test.com')
         self.assertTrue(user.active)
         self.assertTrue(user.password)
+        self.assertFalse(user.admin)
 
     def test_add_user_duplicate_username(self):
         add_user('justatest', 'test@test.com', 'mypassword')
@@ -43,8 +43,6 @@ class TestUserModel(BaseTestCase):
 
     def test_to_json(self):
         user = add_user('justatest', 'test@test.com', 'mypassword')
-        db.session.add(user)
-        db.session.commit()
         self.assertTrue(isinstance(user.to_json(), dict))
 
     def test_passwords_are_random(self):

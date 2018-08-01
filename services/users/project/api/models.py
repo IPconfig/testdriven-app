@@ -1,4 +1,4 @@
-# services/users/project/api/users.py
+# services/users/project/api/models.py
 
 from sqlalchemy.sql import func
 
@@ -17,8 +17,9 @@ class User(db.Model):
     username = db.Column(db.String(128), unique=True, nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    active = db.Column(db.Boolean(), default=True, nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
+    admin = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, username, email, password):
         self.username = username
@@ -31,8 +32,8 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'password': self.password,
-            'active': self.active
+            'active': self.active,
+            'admin': self.admin
         }
 
     def encode_auth_token(self, user_id):

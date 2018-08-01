@@ -4,5 +4,5 @@ import {shallow} from 'enzyme';
 import App from '../../App';
 
 test('App renders without crashing', () => {
-    const wrapper = shallow(<App/>)
+    const wrapper = shallow(<App/>);
 });

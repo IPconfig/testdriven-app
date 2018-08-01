@@ -19,7 +19,7 @@ const AddUser = (props) => {
                     name="email"
                     className="input is-large"
                     type="email"
-                    placeholder="Enter an email adress"
+                    placeholder="Enter an email address"
                     required
                     value={props.email}
                     onChange={props.handleChange}

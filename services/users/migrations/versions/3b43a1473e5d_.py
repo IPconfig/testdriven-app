@@ -1,4 +1,4 @@
-"""empty message
+"""email and username must be unique
 
 Revision ID: 3b43a1473e5d
 Revises: 62e5b14a00a5

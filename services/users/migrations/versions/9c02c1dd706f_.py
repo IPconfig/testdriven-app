@@ -1,4 +1,4 @@
-"""empty message
+"""add column for passwords
 
 Revision ID: 9c02c1dd706f
 Revises: 3b43a1473e5d
