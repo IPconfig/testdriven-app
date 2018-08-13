@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import UsersList from './components/UsersList';
 import About from './components/About';
+import Overview from './components/Overview';
 import NavBar from './components/NavBar';
 import Form from './components/Form';
 import Logout from './components/Logout';
@@ -120,6 +121,7 @@ class App extends Component {
                     />
                   )} />
                   <Route exact path='/about' component={About}/>
+                  <Route exact path='/overview' component={Overview}/>
                   <Route exact path='/register' render={() => (
                     <Form
                       formType={'Register'}
