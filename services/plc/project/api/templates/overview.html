@@ -1,0 +1,49 @@
+{% block content %}
+
+<style>
+.state0 {
+	background-color: #9F9F9F;
+}
+.state1 {
+	background-color: #0F0;
+}
+.state2 {
+	background-color: #F00;
+}
+.state3 {
+	background-color: #FF8000;
+}
+.overview {
+    text-align: center;
+    position: absolute;
+}
+
+.row {
+    display: block;
+    white-space: nowrap;
+    margin: 1px;
+}
+
+.element {
+    display: inline-block;
+	width: 10px; 
+	padding-bottom: 10px; /* = width for a square aspect ratio */
+    margin: 1px;
+}
+
+</style>
+
+
+<div class="overview">
+{% for row in values %}
+    <div class="row">
+    {% for value in row %}
+        <div class="element state{{ value }}">
+        </div>
+    {% endfor %}
+    </div>
+{% endfor %}
+</div>
+
+
+{% endblock %}

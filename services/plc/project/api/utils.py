@@ -1,17 +1,12 @@
+# services/plc/project/api/utils.py
+
 import snap7.client
 import snap7.util
 import snap7.snap7types
 from snap7.snap7exceptions import Snap7Exception
 
-from flask import Blueprint, jsonify, render_template
 
-#    plc = connect_plc('192.168.0.1', 0, 0)
-#    data = read_plc(plc, 7, 0, 2002, 42002)
-
-plc_blueprint = Blueprint('plc', __name__, template_folder='./templates')
-
-
-def connect_plc(adress, rack, slot):
+def plc_connect(adress, rack, slot):
     """
     Connect to a S7 server.
 
@@ -24,6 +19,7 @@ def connect_plc(adress, rack, slot):
     slot : Int
         slot on server
     """
+
     plc = snap7.client.Client()
     try:
         plc.connect(adress, rack, slot)  # ('IP-address', rack, slot)
@@ -32,9 +28,7 @@ def connect_plc(adress, rack, slot):
         print(exc)
 
 
-def read_plc(client, db_num, db_offset_start, db_offset_end, db_values_offset):
-    #   client = snap7.client.Client()
-    #   client.connect('192.168.0.1', 0, 0)
+def plc_read(client, db_num, db_offset_start, db_offset_end, db_values_offset):
     """
     Read data from a S7 Server
 
@@ -51,6 +45,7 @@ def read_plc(client, db_num, db_offset_start, db_offset_end, db_values_offset):
     db_values_offset : Int
         Offset on which data values appear, after the tubes per row are defined
     """
+
     tubes_data = client.db_read(db_num, db_offset_start, db_offset_end)
     decoded_tubes_per_row = [int.from_bytes(
         tubes_data[i:i + 2], byteorder='big')
@@ -77,27 +72,4 @@ def read_plc(client, db_num, db_offset_start, db_offset_end, db_values_offset):
         tubestate_start = tubestate_start + tubestate_size
         tube_row_no = tube_row_no + 1
         data.append(decoded_tubestate_data)
-    client.disconnect()
     return data
-#   print(data)
-
-
-@plc_blueprint.route('/plc', methods=['GET'])
-def get_status():
-    plc = connect_plc('192.168.0.1', 0, 0)
-    data = read_plc(plc, 7, 0, 2002, 6002)
-    response_object = {
-        'status': 'success',
-        'data': {'rows': data}
-    }
-#    plc = connect_plc('62.194.129.29', 0, 0
-#   data = read_plc(plc, 7, 0, 2002, 6002))
-#    return render_template('overview.html', {'rows': data})
-    return jsonify(response_object), 200
-
-
-@plc_blueprint.route('/plc/overview', methods=['GET'])
-def overview():
-    plc = connect_plc('192.168.0.1', 0, 0)
-    data = read_plc(plc, 7, 0, 2002, 42002)
-    return render_template('overview.html', {'rows': data})
