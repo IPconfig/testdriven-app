@@ -1,0 +1,3 @@
+CREATE DATABASE plc_prod;
+CREATE DATABASE plc_dev;
+CREATE DATABASE plc_test;

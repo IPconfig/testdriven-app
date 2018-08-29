@@ -39,6 +39,7 @@ services:
     depends_on:
       - users
       - client
+      - plc
 
   client:
     build:
@@ -54,6 +55,7 @@ services:
       - REACT_APP_USERS_SERVICE_URL=http://localhost
     depends_on:
       - users
+      - plc
   
   plc:
     build:
@@ -68,5 +70,17 @@ services:
       - APP_SETTINGS=project.config.DevelopmentConfig
       - USERS_SERVICE_URL=http://users:5000
       - SECRET_KEY=my_precious
+      - DATABASE_URL=postgres://postgres:postgres@plc-db:5432/plc_dev
+      - DATABASE_TEST_URL=postgres://postgres:postgres@plc-db:5432/plc_test
     depends_on:
-      - users
+      - plc-db
+
+  plc-db:
+    build:
+      context: ./services/plc/project/db
+      dockerfile: Dockerfile
+    ports:
+      - 5436:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
