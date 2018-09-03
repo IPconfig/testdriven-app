@@ -94,7 +94,7 @@ def get_array(_bytearray, byte_index, max_size):
     _data = [int.from_bytes(
             _bytearray[i:i + 2], byteorder='big')
                                 for i in range(0, max_size * 2, 2)]
-    data.append(_data)
+    data.extend(_data)
     return data
 
 
@@ -104,6 +104,7 @@ def get_array_filter(_bytearray, byte_index, max_size):
     int are represented in two bytes
     """
     size = _bytearray[byte_index + 2]
+
 
     if max_size < size:
         logger.error("Array is too big for the size given in specification")
@@ -117,7 +118,7 @@ def get_array_filter(_bytearray, byte_index, max_size):
                         if int.from_bytes(
                             _bytearray[i:i + 2],
                             byteorder='big') != 0]
-    data.append(_data)
+    data.extend(_data)
     return data
 
 
