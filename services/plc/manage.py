@@ -7,7 +7,7 @@ import coverage
 from flask.cli import FlaskGroup
 
 from project import create_app, db
-from project.api.models import Reactor
+from project.api.models import Plc
 
 
 COV = coverage.coverage(
@@ -54,6 +54,17 @@ def cov():
 def recreate_db():
     db.drop_all()
     db.create_all()
+    db.session.commit()
+
+
+@cli.command()
+def seed_db():
+    """Seeds the database."""
+    db.session.add(Plc(
+        ip='192.168.0.1',
+        rack=0,
+        slot=0,
+    ))
     db.session.commit()
 
 
