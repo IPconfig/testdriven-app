@@ -7,6 +7,8 @@ PLC bytearray data.
 I added the set and get for arrays myself
 """
 
+# TODO: set ARRAY and FARRAY values
+
 # flake8: noqa
 try:
     # try with the standard library
@@ -79,6 +81,33 @@ def get_int(bytearray_, byte_index):
     return value
 
 
+def set_array(_bytearray, byte_index, value, max_size):
+    """
+    parse array of integers from bytearray
+    int are represented in two bytes
+
+    :params value: array data
+    :params max_size: max possible array size
+    """
+    size = _bytearray[byte_index + 2]
+    if max_size < size:
+        logger.error("Array is too big for the size given in specification")
+        logger.error("WRONG SIZED ARRAY ENCOUNTERED")
+        size = max_size
+    _no = len(value)
+    data = None
+    # _data = [get_int(
+    #                 _bytearray, i)
+    #                             for i in range(0, max_size * 2, 2)]
+    for elem in value:
+        _data += elem.to_bytes(2, byteorder='little')
+
+    for r in range(_no, max_size, 2):  #  when there are not enough elements
+        # fill empty space with zeroes
+        _data += (0).to_bytes(2, byteorder='little')
+    return data
+
+
 def get_array(_bytearray, byte_index, max_size):
     """
     parse array of integers from bytearray
@@ -91,6 +120,9 @@ def get_array(_bytearray, byte_index, max_size):
         size = max_size
 
     data = []
+    # _data = [get_int(
+    #                 _bytearray, i)
+    #                             for i in range(0, max_size * 2, 2)]
     _data = [int.from_bytes(
             _bytearray[i:i + 2], byteorder='big')
                                 for i in range(0, max_size * 2, 2)]
@@ -112,12 +144,9 @@ def get_array_filter(_bytearray, byte_index, max_size):
         size = max_size
 
     data = []
-    _data = [int.from_bytes(
-        _bytearray[i:i + 2], byteorder='big')
+    _data = [get_int(_bytearray, i)
                         for i in range(0, max_size * 2, 2)
-                        if int.from_bytes(
-                            _bytearray[i:i + 2],
-                            byteorder='big') != 0]
+                        if get_int(_bytearray, i) != 0]
     data.extend(_data)
     return data
 
@@ -427,12 +456,12 @@ class DB_Row(object):
         if _type.startswith('ARRAY'):
             max_size = re.search('\d+', _type).group(0)
             max_size = int(max_size)
-            return set_array(_bytearray, byte_index, max_size)
+            return set_array(_bytearray, byte_index, value, max_size)
 
         if _type.startswith('FARRAY'):
             max_size = re.search('\d+', _type).group(0)
             max_size = int(max_size)
-            return set_array_filter(_bytearray, byte_index, max_size)
+            return set_array(_bytearray, byte_index, value, max_size)
 
         if _type == 'REAL':
             return set_real(_bytearray, byte_index, value)

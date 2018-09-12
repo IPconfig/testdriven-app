@@ -4,6 +4,8 @@ import snap7.client
 import snap7.util
 import snap7.snap7types
 from snap7.snap7exceptions import Snap7Exception
+from project.api.models import Plc_db
+from project.api.util_db import DB
 
 
 def plc_connect(adress, rack, slot):
@@ -26,6 +28,86 @@ def plc_connect(adress, rack, slot):
         return plc
     except Snap7Exception as exc:
         print(exc)
+
+
+# Byte index    Variable name  Datatype
+layout = """
+
+0           tubes_per_row       FARRAY[1001]    # number of tubes per row
+2002        tube_ROW            FARRAY[10000]   # element position gives row#
+22002       tube_number_in_row  FARRAY[10000]   # element position gives col#
+42002       tube_state          ARRAY[10000]    # element position gives value
+62002       total_tubes         INT             # number of total tubes
+62004       counter             INT             # counter
+62006.0     debounce            BOOL
+62008       total_rows          INT             # number of total rows
+62010       coppycounter        INT
+62012       overviewcoppied     INT
+"""
+
+
+def read_plc(client):
+    """
+    Read database, put in bytearray and turn it into an object
+    Args:
+        client (object): The client to use
+    """
+    db_number = 7
+    all_data = client.db_read(7, 0, 62014)
+
+    _db = DB(
+        db_number,              # the db we use
+        all_data,               # bytearray from the plc
+        layout,                 # layout specification DB variable data
+                                # A DB specification is the specification of a
+                                # DB object in the PLC you can find it using
+                                # the dataview option on a DB object in PCS7
+
+        62012+2,                # size of the specification 17 is start
+                                # of last value
+                                # which is a DWORD which is 2 bytes,
+
+        1,                      # number of row's / specifications
+
+        id_field=None,          # field we can use to identify a row.
+                                # default index is used
+        layout_offset=0,        # sometimes specification does not start a 0
+        db_offset=0             # At which point in 'all_data' should we start
+                                # reading. if could be that the specification
+                                # does not start at 0
+    )
+    _db = _db[0]                # remove the row array, since it's the only row
+    _tube_state_client = plc_read_values(client)
+
+    db = Plc_db(
+        tubes_per_row=_db["tubes_per_row"],
+        tube_ROW=_db["tube_ROW"],
+        tube_number_in_row=_db["tube_number_in_row"],
+        tube_state=_db["tube_state"],
+        tube_state_client=_tube_state_client,
+        total_tubes=_db["total_tubes"],
+        counter=_db["counter"],
+        debounce=_db["debounce"],
+        total_rows=_db["total_rows"],
+        coppycounter=_db["coppycounter"],
+        overviewcoppied=_db["overviewcoppied"]
+    )
+    return db
+
+
+def write_plc(data, client):
+    """
+    write database, put in bytearray and turn it into an object
+    Args:
+        data (object): data to put into the plc
+        client (object): The client to write to
+    """
+    dbo = Plc_db.query.filter_by(plc_id=1).first()
+
+
+# TODO: create a ['values_filtered'] for db obj
+# TODO: Transform and add  db.session.add(Plc_db(
+#            username=username, email=email, password=password))
 
 
 def plc_read_values(client):

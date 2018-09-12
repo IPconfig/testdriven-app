@@ -7,6 +7,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 
 
@@ -14,7 +15,7 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 migrate = Migrate()
 toolbar = DebugToolbarExtension()
-
+ma = Marshmallow()
 
 def create_app(script_info=None):
 
@@ -31,6 +32,7 @@ def create_app(script_info=None):
     # set up extensions
     toolbar.init_app(app)
     db.init_app(app)
+    ma.init_app(app)
     migrate.init_app(app, db)
 
     # register blueprints

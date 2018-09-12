@@ -10,3 +10,6 @@ flask-cors==3.0.6
 flask-migrate==2.2.0
 flask-bcrypt==0.7.1
 python-snap7==0.10
+marshmallow==3.0.0b13
+marshmallow-sqlalchemy==0.14.1
+flask-marshmallow==0.9.0
