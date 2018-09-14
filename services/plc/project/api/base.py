@@ -60,7 +60,6 @@ def get_status():
                     response_object['error'] = e
                     return jsonify(response_object), 400
     except Exception as e:
-        response_object['error'] = e
         return jsonify(response_object), 400
 
 
