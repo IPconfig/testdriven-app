@@ -42,14 +42,14 @@ class TestS7util(BaseTestCase):
         test_array = bytearray(_bytearray)
         print(test_array)
         row = util.DB_Row(test_array, test_spec, layout_offset=4)
-        self.assertEqual(row['testArray'], [0, 1028])  # doesn't make sense
+        self.assertEqual(row['testArray'], [10, 10])
 
     def test_set_array(self):
         test_array = bytearray(_bytearray)
         row = util.DB_Row(test_array, test_spec, layout_offset=4)
         row['testArray'] = [10, 10]
         print(row)
-        self.assertEqual(row['testArray'], [10, 10])  # doesn't make sense
+        self.assertEqual(row['testArray'], [10, 10])
 
     def test_get_string(self):
         """

@@ -125,17 +125,18 @@ def get_array(_bytearray, byte_index, max_size):
         logger.error("WRONG SIZED ARRAY ENCOUNTERED")
         size = max_size
 
-    data = []
-    # _data = [get_int(
-    #                 _bytearray, i)
-    #                             for i in range(0, max_size * 2, 2)]
-    _data = [int.from_bytes(
-            _bytearray[i:i + 2], byteorder='big')
-                                for i in range(0, max_size * 2, 2)]
-    data.extend(_data)
-    return data
+    result = []
+    # same method as get_int, but loops and append int to a list
+    for i in range(0, max_size * 2, 2):
+        data = _bytearray[byte_index + i:byte_index + 2 + i]
+        data[1] = data[1] & 0xff
+        data[0] = data[0] & 0xff
+        packed = struct.pack('2B', *data)
+        value = struct.unpack('>h', packed)[0]
+        result.append(value)
+    return result
 
-
+# TODO: fix filtered array with struct too
 def get_array_filter(_bytearray, byte_index, max_size):
     """
     parse array of integers from bytearray
