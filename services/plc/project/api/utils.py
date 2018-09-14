@@ -4,7 +4,7 @@ import snap7.client
 import snap7.util
 import snap7.snap7types
 from snap7.snap7exceptions import Snap7Exception
-from project.api.models import Plc_db
+from project.api.models import Plc_db, PLCDBSchema
 from project.api.util_db import DB
 
 
@@ -46,7 +46,7 @@ layout = """
 """
 
 
-def read_plc(client):
+def read_plc_memory(client):
     """
     Read database, put in bytearray and turn it into an object
     Args:
@@ -76,24 +76,39 @@ def read_plc(client):
                                 # reading. if could be that the specification
                                 # does not start at 0
     )
-    _db = _db[0]                # remove the row array, since it's the only row
-    _tube_state_client = plc_read_values(client)
+    memObj = _db[0]                # remove the row array, since it's the only row
+    return memObj
 
-    db = Plc_db(
-        tubes_per_row=_db["tubes_per_row"],
-        tube_ROW=_db["tube_ROW"],
-        tube_number_in_row=_db["tube_number_in_row"],
-        tube_state=_db["tube_state"],
-        tube_state_client=_tube_state_client,
-        total_tubes=_db["total_tubes"],
-        counter=_db["counter"],
-        debounce=_db["debounce"],
-        total_rows=_db["total_rows"],
-        coppycounter=_db["coppycounter"],
-        overviewcoppied=_db["overviewcoppied"]
+
+def map_memory_to_db(memObj, client):
+    tube_state_client = plc_read_values(client)  # add filtered values
+
+    dbo = Plc_db(
+            tubes_per_row=memObj["tubes_per_row"],
+            tube_ROW=memObj["tube_ROW"],
+            tube_number_in_row=memObj["tube_number_in_row"],
+            tube_state=memObj["tube_state"],
+            tube_state_client=tube_state_client,
+            total_tubes=memObj["total_tubes"],
+            counter=memObj["counter"],
+            debounce=memObj["debounce"],
+            total_rows=memObj["total_rows"],
+            coppycounter=memObj["coppycounter"],
+            overviewcoppied=memObj["overviewcoppied"]
     )
-    return db
+    return dbo
 
+
+def plc_db_to_json(dbo):
+    PLCDB_schema = PLCDBSchema()
+    result = PLCDB_schema.dumps(dbo)
+    return result
+
+
+def read_plc(client):
+    memObj = read_plc_memory(client)
+    dbo = map_memory_to_db(memObj, client)
+    return dbo
 
 def write_plc(data, client):
     """

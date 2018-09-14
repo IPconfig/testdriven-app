@@ -63,6 +63,7 @@ def set_int(bytearray_, byte_index, _int):
     # make sure were dealing with an int
     _int = int(_int)
     _bytes = struct.unpack('2B', struct.pack('>h', _int))
+    # print("bytes is: {0}".format(_bytes))
     bytearray_[byte_index:byte_index + 2] = _bytes
     return bytearray_
 
@@ -78,6 +79,8 @@ def get_int(bytearray_, byte_index):
     data[0] = data[0] & 0xff
     packed = struct.pack('2B', *data)
     value = struct.unpack('>h', packed)[0]
+    # print('packed: {0}'.format, packed)
+    # print("value that gets returned: {0}".format, value)
     return value
 
 
@@ -89,23 +92,26 @@ def set_array(_bytearray, byte_index, value, max_size):
     :params value: array data
     :params max_size: max possible array size
     """
-    size = _bytearray[byte_index + 2]
+
+    size = len(value) * 2
     if max_size < size:
         logger.error("Array is too big for the size given in specification")
         logger.error("WRONG SIZED ARRAY ENCOUNTERED")
         size = max_size
     _no = len(value)
-    data = None
-    # _data = [get_int(
-    #                 _bytearray, i)
-    #                             for i in range(0, max_size * 2, 2)]
-    for elem in value:
-        _data += elem.to_bytes(2, byteorder='little')
 
-    for r in range(_no, max_size, 2):  #  when there are not enough elements
-        # fill empty space with zeroes
-        _data += (0).to_bytes(2, byteorder='little')
-    return data
+    data = bytearray()
+    zero = bytearray()
+    result = bytearray()
+    # convert list of values to bytes
+    data = data.join((struct.pack('>h', val) for val in value))
+    # generate zeroes to fill the empty space in the array
+    zero = zero.join((struct.pack('>h', 0) for val in range(_no, max_size, 1)))
+    # create a new byte array consisting of values + zeroes
+    result = result.join([data, zero])
+    _bytes = struct.unpack('2B' * max_size, bytes(result))
+    for i, b in enumerate(_bytes):
+        _bytearray[byte_index + i] = b
 
 
 def get_array(_bytearray, byte_index, max_size):

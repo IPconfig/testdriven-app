@@ -31,22 +31,25 @@ _bytearray = bytearray([
     68, 78, 211, 51,                               # test real
     255, 255, 255, 255,                            # test dword
     0, 0,                                          # test int 2
-    10, 0, 10, 0
+    0, 10, 0, 10
     ])
 
+print(_bytearray)
 
 class TestS7util(BaseTestCase):
 
     def test_get_array(self):
         test_array = bytearray(_bytearray)
+        print(test_array)
         row = util.DB_Row(test_array, test_spec, layout_offset=4)
         self.assertEqual(row['testArray'], [0, 1028])  # doesn't make sense
 
     def test_set_array(self):
         test_array = bytearray(_bytearray)
         row = util.DB_Row(test_array, test_spec, layout_offset=4)
-        row['testArray'] = [0, 0]
-        self.assertEqual(row['testArray'], [0, 1028])  # doesn't make sense
+        row['testArray'] = [10, 10]
+        print(row)
+        self.assertEqual(row['testArray'], [10, 10])  # doesn't make sense
 
     def test_get_string(self):
         """
