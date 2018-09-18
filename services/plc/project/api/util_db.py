@@ -123,7 +123,7 @@ def get_array(_bytearray, byte_index, max_size):
         size = max_size
 
     result = []
-    # same method as get_int, but loops and append int to a list
+    # same method as get_int, added loop to append int to a list
     for i in range(0, max_size * 2, 2):
         data = _bytearray[byte_index + i:byte_index + 2 + i]
         data[1] = data[1] & 0xff
@@ -133,26 +133,32 @@ def get_array(_bytearray, byte_index, max_size):
         result.append(value)
     return result
 
-# TODO: fix filtered array with struct too
+
 def get_array_filter(_bytearray, byte_index, max_size):
     """
     parse array of integers from bytearray
-    int are represented in two bytes
+    returns a list without trailing zeroes!
+    potential unwanted side effects
     """
     size = _bytearray[byte_index + 2]
-
-
     if max_size < size:
         logger.error("Array is too big for the size given in specification")
         logger.error("WRONG SIZED ARRAY ENCOUNTERED")
         size = max_size
 
-    data = []
-    _data = [get_int(_bytearray, i)
-                        for i in range(0, max_size * 2, 2)
-                        if get_int(_bytearray, i) != 0]
-    data.extend(_data)
-    return data
+    result = []
+    # same method as get_int, added loop to append int to a list
+    for i in range(0, max_size * 2, 2):
+        data = _bytearray[byte_index + i:byte_index + 2 + i]
+        data[1] = data[1] & 0xff
+        data[0] = data[0] & 0xff
+        packed = struct.pack('2B', *data)
+        value = struct.unpack('>h', packed)[0]
+        if value == 0:
+            break
+        else:
+            result.append(value)
+    return result
 
 
 def set_real(_bytearray, byte_index, real):

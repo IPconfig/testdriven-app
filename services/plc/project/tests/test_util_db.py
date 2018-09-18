@@ -21,6 +21,7 @@ test_spec = """
 17      testDword    DWORD
 21      testint2     INT
 23      testArray    ARRAY[2]
+27      testFilter   FARRAY[4]
 """
 
 _bytearray = bytearray([
@@ -31,7 +32,8 @@ _bytearray = bytearray([
     68, 78, 211, 51,                               # test real
     255, 255, 255, 255,                            # test dword
     0, 0,                                          # test int 2
-    0, 10, 0, 10
+    0, 10, 0, 10,                                  # test array
+    0, 1, 0, 2, 0, 0, 0, 0                         # test farray
     ])
 
 
@@ -55,6 +57,19 @@ class TestS7util(BaseTestCase):
             pass
         # value should still be empty
         self.assertEqual(row['testArray'], [0, 0])
+
+    def test_get_filtered_array(self):  # Be careful with filtered arrays
+        test_array = bytearray(_bytearray)
+        row = util.DB_Row(test_array, test_spec, layout_offset=4)
+        self.assertEqual(row['testFilter'], [1, 2])
+
+    def test_set_filtered_array(self):  # FARRAY uses same set method as ARRAY
+        test_array = bytearray(_bytearray)
+        row = util.DB_Row(test_array, test_spec, layout_offset=4)
+        row['testFilter'] = [10, 0, 0, 0]
+        self.assertEqual(row['testFilter'], [10])
+        row['testFilter'] = []
+        self.assertEqual(row['testFilter'], [])
 
     def test_get_string(self):
         """
