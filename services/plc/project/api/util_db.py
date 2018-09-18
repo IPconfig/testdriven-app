@@ -63,7 +63,6 @@ def set_int(bytearray_, byte_index, _int):
     # make sure were dealing with an int
     _int = int(_int)
     _bytes = struct.unpack('2B', struct.pack('>h', _int))
-    # print("bytes is: {0}".format(_bytes))
     bytearray_[byte_index:byte_index + 2] = _bytes
     return bytearray_
 
@@ -79,8 +78,6 @@ def get_int(bytearray_, byte_index):
     data[0] = data[0] & 0xff
     packed = struct.pack('2B', *data)
     value = struct.unpack('>h', packed)[0]
-    # print('packed: {0}'.format, packed)
-    # print("value that gets returned: {0}".format, value)
     return value
 
 
@@ -89,27 +86,27 @@ def set_array(_bytearray, byte_index, value, max_size):
     parse array of integers from bytearray
     int are represented in two bytes
 
-    :params value: array data
+    :params value: array / list of int
     :params max_size: max possible array size
     """
 
-    size = len(value) * 2
-    if max_size < size:
-        logger.error("Array is too big for the size given in specification")
-        logger.error("WRONG SIZED ARRAY ENCOUNTERED")
-        size = max_size
-    _no = len(value)
+    size = len(value)  # count number of elements
 
-    data = bytearray()
-    zero = bytearray()
-    result = bytearray()
-    # convert list of values to bytes
-    data = data.join((struct.pack('>h', val) for val in value))
-    # generate zeroes to fill the empty space in the array
-    zero = zero.join((struct.pack('>h', 0) for val in range(_no, max_size, 1)))
-    # create a new byte array consisting of values + zeroes
-    result = result.join([data, zero])
+    if size > max_size:
+        raise ValueError('size %s > max_size %s %s' % (size, max_size, value))
+
+    result = bytearray() # initialize bytearray that will hold all values
+    for val in value:
+        result.extend(struct.pack('>h', val))
+    
+    # fill the rest of the bytes with empty space
+    for r in range(size, max_size):
+        result.extend(struct.pack('>h', 0))
+
+    # unpack the result to bytes
     _bytes = struct.unpack('2B' * max_size, bytes(result))
+    
+    # place result back into _bytearray
     for i, b in enumerate(_bytes):
         _bytearray[byte_index + i] = b
 

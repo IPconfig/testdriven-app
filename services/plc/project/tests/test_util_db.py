@@ -34,22 +34,27 @@ _bytearray = bytearray([
     0, 10, 0, 10
     ])
 
-print(_bytearray)
 
 class TestS7util(BaseTestCase):
-
     def test_get_array(self):
         test_array = bytearray(_bytearray)
-        print(test_array)
         row = util.DB_Row(test_array, test_spec, layout_offset=4)
         self.assertEqual(row['testArray'], [10, 10])
 
     def test_set_array(self):
         test_array = bytearray(_bytearray)
         row = util.DB_Row(test_array, test_spec, layout_offset=4)
-        row['testArray'] = [10, 10]
-        print(row)
         self.assertEqual(row['testArray'], [10, 10])
+        row['testArray'] = [10]
+        self.assertEqual(row['testArray'], [10, 0])
+        row['testArray'] = []
+        self.assertEqual(row['testArray'], [0, 0])
+        try:
+            row['testArray'] = [10, 10, 10]  # array bigger than specification
+        except ValueError:
+            pass
+        # value should still be empty
+        self.assertEqual(row['testArray'], [0, 0])
 
     def test_get_string(self):
         """
