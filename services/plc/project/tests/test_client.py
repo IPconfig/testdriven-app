@@ -31,7 +31,7 @@ class TestClient(unittest.TestCase):
                                 "bin/snap7-server.py")
         chmod(server_path, 0o500)  # make path executable in docker container
         cls.server_pid = Popen([server_path]).pid
-        time.sleep(2)  # wait for server to start
+        time.sleep(1)  # wait for server to start
 
     @classmethod
     def tearDownClass(cls):
