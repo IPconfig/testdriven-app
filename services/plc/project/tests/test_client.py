@@ -1,7 +1,7 @@
 import ctypes
 import struct
 import unittest
-import logging
+# import logging
 import time
 import mock
 
@@ -14,7 +14,7 @@ from snap7.snap7types import S7AreaDB, S7WLByte, S7DataItem
 import project.api.util_db as util
 
 
-logging.basicConfig(level=logging.WARNING)
+# logging.basicConfig(level=logging.WARNING)
 
 ip = '127.0.0.1'
 tcpport = 1102
@@ -160,7 +160,7 @@ class TestClient(unittest.TestCase):
         self.client.write_area(area, dbnumber, start, data)
 
     def test_list_blocks(self):
-        blockList = self.client.list_blocks()
+        self.client.list_blocks()
 
     def test_list_blocks_of_type(self):
         self.client.list_blocks_of_type('DB', 10)
@@ -264,10 +264,10 @@ class TestClient(unittest.TestCase):
         for param, value in expected:
             self.assertEqual(self.client.get_param(param), value)
 
-        non_client = snap7.snap7types.LocalPort, snap7.snap7types.WorkInterval,\
-            snap7.snap7types.MaxClients, snap7.snap7types.BSendTimeout,\
-            snap7.snap7types.BRecvTimeout, snap7.snap7types.RecoveryTime,\
-            snap7.snap7types.KeepAliveTime
+        non_client = snap7.snap7types.LocalPort,\
+            snap7.snap7types.WorkInterval, snap7.snap7types.MaxClients,\
+            snap7.snap7types.BSendTimeout, snap7.snap7types.BRecvTimeout,\
+            snap7.snap7types.RecoveryTime, snap7.snap7types.KeepAliveTime
 
         # invalid param for client
         for param in non_client:
@@ -320,7 +320,6 @@ class TestClient(unittest.TestCase):
 
     def test_plc_cold_start(self):
         self.client.plc_cold_start()
-
 
     def test_get_pdu_length(self):
         pduRequested = self.client.get_param(10)
@@ -375,7 +374,7 @@ class TestClient(unittest.TestCase):
 
         area = snap7.snap7types.areas.DB
         dbnumber = 1
-        size = 4
+        # size = 4
         start = 1
         data = b'\xDE\xAD\xBE\xEF'
 
@@ -487,7 +486,7 @@ class TestLibraryIntegration(unittest.TestCase):
         self.loadlib_patch.stop()
 
     def test_create(self):
-        client = snap7.client.Client()
+        snap7.client.Client()
         self.mocklib.Cli_Create.assert_called_once()
 
     def test_gc(self):
