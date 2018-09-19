@@ -13,3 +13,4 @@ python-snap7==0.10
 marshmallow==3.0.0b13
 marshmallow-sqlalchemy==0.14.1
 flask-marshmallow==0.9.0
+mock==2.0.0
