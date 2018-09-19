@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, render_template
 
 from project import db
 from project.api.models import Plc, PLCDBSchema, Plc_db
-from project.api.utils import plc_connect, plc_read_values, read_plc
+from project.api.utils import plc_connect, read_plc
 
 
 plc_blueprint = Blueprint('plc', __name__, template_folder='./templates')
@@ -20,8 +20,8 @@ def get_status():
     try:
         client = Plc.query.first()
         plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
-        if not client:
-            response_object['message'] = 'No PLC connfigured in database'
+        if not client:  # client will always be set, even empty
+            response_object['message'] = 'No PLC configured in database'
             return jsonify(response_object), 400
         if not plc:
             response_object['message'] = 'Could not connect to plc'
@@ -59,6 +59,7 @@ def get_status():
                     # db.session.rollback()
                     response_object['error'] = e
                     return jsonify(response_object), 400
+            plc.disconnect()
     except Exception as e:
         return jsonify(response_object), 400
 
@@ -80,12 +81,13 @@ def overview():
 #         'message': 'An error occured.'
 #     }
 #     try:
-#         dbo = Plc_db.query.filter_by(plc_id=1).first()
-#         plcdb_schema = PLCDBSchema()
-#         result = plcdb_schema.dump(dbo)
+#         client = Plc.query.first()
+#       plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
+#         write_plc(plc)
+#         plc.disconnect()
+
 #         response_object['status'] = 'success'
-#         response_object['message'] = 'PLC data retrieved from db'
-#         response_object['result'] = result
+#         response_object['message'] = 'dbo set to plc memory'
 #         return jsonify(response_object), 200
 
 #     except (exc.IntegrityError, ValueError, Exception) as e:
@@ -93,25 +95,25 @@ def overview():
 #         return jsonify(response_object), 400
 
 
-@plc_blueprint.route('/plc/new', methods=['GET'])
-def new():
-    response_object = {
-        'status': 'fail',
-        'message': 'An error occured.'
-    }
-    try:
-        plc = plc_connect('192.168.0.1', 0, 0)
-        if not plc:
-            response_object['message'] = 'Could not connect to plc'
-            return jsonify(response_object), 400
-        else:
-            response = plc_read_values(plc)
-            response_object['status'] = 'success'
-            response_object['message'] = 'Successfully scraped data.'
-            response_object['values'] = response
-            return jsonify(response_object), 200
-    except Exception as e:
-        return jsonify(response_object), 400
+# @plc_blueprint.route('/plc/new', methods=['GET'])
+# def new():
+#     response_object = {
+#         'status': 'fail',
+#         'message': 'An error occured.'
+#     }
+#     try:
+#         plc = plc_connect('192.168.0.1', 0, 0)
+#         if not plc:
+#             response_object['message'] = 'Could not connect to plc'
+#             return jsonify(response_object), 400
+#         else:
+#             response = plc_read_values(plc)
+#             response_object['status'] = 'success'
+#             response_object['message'] = 'Successfully scraped data.'
+#             response_object['values'] = response
+#             return jsonify(response_object), 200
+#     except Exception as e:
+#         return jsonify(response_object), 400
 
 
 @plc_blueprint.route('/plc/ping', methods=['GET'])
