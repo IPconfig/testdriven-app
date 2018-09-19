@@ -30,8 +30,90 @@ def plc_connect(adress, rack, slot):
         print(exc)
 
 
-# Byte index    Variable name  Datatype
-layout = """
+def map_bytearray_with_layout(client, db_number, layout, _bytearray, size):
+    """
+    Read database, put in bytearray and turn it into an object
+    Args:
+        client (object): The client to use
+        db_number (int): the database of the plc
+        layout: layout specification
+        _bytearray: bytearray from the plc
+        size: 
+    """
+
+    # _bytearray = client.db_read(7, 0, 62014)
+    # size = 62012+2
+    _db = DB(
+        db_number,              # the db we use
+        _bytearray,             # bytearray from the plc
+        layout,                 # layout specification DB variable data
+                                # A DB specification is the specification of a
+                                # DB object in the PLC you can find it using
+                                # the dataview option on a DB object in PCS7
+        size,                   # size of the specification 17 is start
+                                # of last value
+                                # which is a DWORD which is 2 bytes,
+        1,                      # number of row's / specifications
+        id_field=None,          # field we can use to identify a row.
+                                # default index is used
+        layout_offset=0,        # sometimes specification does not start a 0
+        db_offset=0             # At what point in '_bytearray' should we start
+                                # reading. if could be that the specification
+                                # does not start at 0
+    )
+    memObj = _db[0]             # remove the row array, since it's the only row
+    return memObj
+
+
+def map_memory_to_dbo(memObj, client, filtered_tubes):
+    dbo = Plc_db(
+            tubes_per_row=memObj["tubes_per_row"],
+            tube_ROW=memObj["tube_ROW"],
+            tube_number_in_row=memObj["tube_number_in_row"],
+            tube_state=memObj["tube_state"],
+            tube_state_client=filtered_tubes,
+            total_tubes=memObj["total_tubes"],
+            counter=memObj["counter"],
+            debounce=memObj["debounce"],
+            total_rows=memObj["total_rows"],
+            coppycounter=memObj["coppycounter"],
+            overviewcoppied=memObj["overviewcoppied"]
+    )
+    return dbo
+
+
+def map_dbo_to_memory(dbo, memObj):
+    memObj["tubes_per_row"] = dbo.tubes_per_row
+    memObj["tube_ROW"] = dbo.tube_ROW
+    memObj["tube_number_in_row"] = dbo.tube_number_in_row
+    memObj["tube_state"] = dbo.tube_state
+    # tube_state_client will not be written to plc memory
+    memObj["total_tubes"] = dbo.total_tubes
+    memObj["counter"] = dbo.counter
+    memObj["debounce"] = dbo.debounce
+    memObj["total_rows"] = dbo.total_rows
+    memObj["coppycounter"] = dbo.coppycounter
+    memObj["overviewcoppied"] = dbo.overviewcoppied
+    return memObj
+
+
+def plc_db_to_json(dbo):
+    PLCDB_schema = PLCDBSchema()
+    result = PLCDB_schema.dumps(dbo)
+    return result
+
+# db_number, layout, _bytearray, size
+
+
+def read_plc(client):
+    '''
+    Read memory of PLC and return a db object
+    Args:
+        client (object): Connected PLC object
+    '''
+    db_number = 7
+    size = 62014
+    layout = """
 
 0           tubes_per_row       FARRAY[1001]    # number of tubes per row
 2002        tube_ROW            FARRAY[10000]   # element position gives row#
@@ -45,114 +127,39 @@ layout = """
 62012       overviewcoppied     INT
 """
 
-
-def read_plc_memory(client):
-    """
-    Read database, put in bytearray and turn it into an object
-    Args:
-        client (object): The client to use
-    """
-    db_number = 7
-    all_data = client.db_read(7, 0, 62014)
-
-    _db = DB(
-        db_number,              # the db we use
-        all_data,               # bytearray from the plc
-        layout,                 # layout specification DB variable data
-                                # A DB specification is the specification of a
-                                # DB object in the PLC you can find it using
-                                # the dataview option on a DB object in PCS7
-
-        62012+2,                # size of the specification 17 is start
-                                # of last value
-                                # which is a DWORD which is 2 bytes,
-
-        1,                      # number of row's / specifications
-
-        id_field=None,          # field we can use to identify a row.
-                                # default index is used
-        layout_offset=0,        # sometimes specification does not start a 0
-        db_offset=0             # At which point in 'all_data' should we start
-                                # reading. if could be that the specification
-                                # does not start at 0
-    )
-    memObj = _db[0]                # remove the row array, since it's the only row
-    return memObj
-
-
-def map_memory_to_db(memObj, client):
-    tube_state_client = plc_read_values(client)  # add filtered values
-
-    dbo = Plc_db(
-            tubes_per_row=memObj["tubes_per_row"],
-            tube_ROW=memObj["tube_ROW"],
-            tube_number_in_row=memObj["tube_number_in_row"],
-            tube_state=memObj["tube_state"],
-            tube_state_client=tube_state_client,
-            total_tubes=memObj["total_tubes"],
-            counter=memObj["counter"],
-            debounce=memObj["debounce"],
-            total_rows=memObj["total_rows"],
-            coppycounter=memObj["coppycounter"],
-            overviewcoppied=memObj["overviewcoppied"]
-    )
+    _bytearray = client.db_read(db_number, 0, size)
+    memObj = map_bytearray_with_layout(client, db_number,
+                                       layout, _bytearray, size)
+    state_filter = filter_tube_state(memObj)
+    dbo = map_memory_to_dbo(memObj, client, state_filter)
     return dbo
 
 
-def plc_db_to_json(dbo):
-    PLCDB_schema = PLCDBSchema()
-    result = PLCDB_schema.dumps(dbo)
-    return result
-
-
-def read_plc(client):
-    memObj = read_plc_memory(client)
-    dbo = map_memory_to_db(memObj, client)
-    return dbo
-
-def write_plc(data, client):
+def write_plc(client):
     """
-    write database, put in bytearray and turn it into an object
+    retrieve db object and write it to the memory
     Args:
         data (object): data to put into the plc
         client (object): The client to write to
     """
+
+    memObj = map_bytearray_with_layout(client)  # this will be all zeroes
     dbo = Plc_db.query.filter_by(plc_id=1).first()
+    memObj = map_dbo_to_memory(memObj, dbo)
+    return memObj
 
 
-# TODO: create a ['values_filtered'] for db obj
-# TODO: Transform and add  db.session.add(Plc_db(
-#            username=username, email=email, password=password))
+def filter_tube_state(memObj):
+    '''
+    returns a list with a list of values per row
+    '''
+    tubes_per_row = memObj["tubes_per_row"]
+    tubes_row_values = memObj["tube_state"]
+    result = []
 
-
-def plc_read_values(client):
-    # This function returns an array with an arrary of values per row
-    # ex of 2 rows with 4 values each: [[1,2,2,3], [4,4,3,1]]
-    tubes_per_row_raw = client.db_read(7, 0, 2002)
-    # decoded_tubes_per_row is something like [10,10,10,10] for a 4x10 matrix
-    # 0 values get filtered, so there should be no empty rows between elements
-    tubes_per_row_decoded = [int.from_bytes(
-        tubes_per_row_raw[i:i + 2], byteorder='big')
-                            for i in range(0, len(tubes_per_row_raw), 2)
-                            if int.from_bytes(
-                                tubes_per_row_raw[i:i + 2],
-                                byteorder='big') != 0]
-
-    tubestate_start = 42002  # actual values start from this offset
-    tube_row_no = 1
-    tube_row_values = []
-
-    for tubes in tubes_per_row_decoded:
-        tubes_size = tubes * 2  # one element takes 2 bytes
-        tube_row_values_raw = client.db_read(7, tubestate_start, tubes_size)
-        # returns an array with all values per row
-        tube_row_values_decoded = [int.from_bytes(
-            tube_row_values_raw[i:i + 2], byteorder='big')
-            for i in range(0, len(tube_row_values_raw), 2)]
-#       print('row {}: {}'.format(tube_row_no, tube_row_values_decoded))
-
-        tubestate_start = tubestate_start + tubes_size  # go to next row
-        tube_row_no = tube_row_no + 1  # increase row number
-        tube_row_values.append(tube_row_values_decoded)
-
-    return tube_row_values
+    start = 0
+    for tubes in tubes_per_row:
+        _temp = [tubes_row_values[start:start + tubes]]
+        start = start + tubes
+        result.extend(_temp)
+    return result
