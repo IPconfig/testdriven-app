@@ -41,9 +41,10 @@ def get_status():
 def overview():
     plc = plc_connect('192.168.0.1', 0, 0)
     response = read_plc(plc)
-    plcdb_schema = PLCDBSchema(only=('tube_state_client'))
+    plcdb_schema = PLCDBSchema(only=['tube_state_client'])
     result = plcdb_schema.dump(response)
-
+    result = result['tube_state_client']
+    # return jsonify(result), 200
     return render_template('overview.html', values=result)
 
 
