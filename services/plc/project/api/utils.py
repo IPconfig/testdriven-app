@@ -144,16 +144,34 @@ def read_plc(client):
 
 
 def write_plc(client):
-    """
-    retrieve db object and write it to the memory
+    '''
+    Read memory of PLC and return a db object
     Args:
-        data (object): data to put into the plc
-        client (object): The client to write to
-    """
+        client (object): Connected PLC object
+    '''
+    db_number = 7
+    size = 62014
+    layout = """
 
-    memObj = map_bytearray_with_layout(client)
+0           tubes_per_row       FARRAY[1001]    # number of tubes per row
+2002        tube_ROW            FARRAY[10000]   # element position gives row#
+22002       tube_number_in_row  FARRAY[10000]   # element position gives col#
+42002       tube_state          ARRAY[10000]    # element position gives value
+62002       total_tubes         INT             # number of total tubes
+62004       counter             INT             # counter
+62006.0     debounce            BOOL
+62008       total_rows          INT             # number of total rows
+62010       coppycounter        INT
+62012       overviewcoppied     INT
+"""
+
+    # read plc data, should be all zeroes after reboot
+    _bytearray = client.db_read(db_number, 0, size)
+
+    memObj = map_bytearray_with_layout(client, db_number,
+                                       layout, _bytearray, size)
     dbo = Plc_db.query.filter_by(plc_id=1).first()
-    memObj = map_dbo_to_memory(memObj, dbo)
+    memObj = map_dbo_to_memory(dbo, memObj)
     return memObj
 
 
