@@ -4,6 +4,8 @@ import snap7.client
 import snap7.util
 import snap7.snap7types
 from snap7.snap7exceptions import Snap7Exception
+
+from project import db
 from project.api.models import Plc_db, PLCDBSchema
 from project.api.util_db import DB
 
@@ -102,6 +104,12 @@ def plc_db_to_json(dbo):
     result = PLCDB_schema.dumps(dbo)
     return result
 
+
+def plc_db_to_object(dbo):
+    PLCDB_schema = PLCDBSchema()
+    result = PLCDB_schema.dump(dbo)
+    return result
+
 # db_number, layout, _bytearray, size
 
 
@@ -127,10 +135,10 @@ def read_plc(client):
 62012       overviewcoppied     INT
 """
 
-    _bytearray = client.db_read(db_number, 0, size)
+    _bytearray = client.db_read(db_number, 0, size)  # read plc data
     memObj = map_bytearray_with_layout(client, db_number,
                                        layout, _bytearray, size)
-    state_filter = filter_tube_state(memObj)
+    state_filter = filter_tube_state(memObj)  # add filtered state to memObj
     dbo = map_memory_to_dbo(memObj, client, state_filter)
     return dbo
 
@@ -143,7 +151,7 @@ def write_plc(client):
         client (object): The client to write to
     """
 
-    memObj = map_bytearray_with_layout(client)  # this will be all zeroes
+    memObj = map_bytearray_with_layout(client)
     dbo = Plc_db.query.filter_by(plc_id=1).first()
     memObj = map_dbo_to_memory(memObj, dbo)
     return memObj
@@ -152,6 +160,9 @@ def write_plc(client):
 def filter_tube_state(memObj):
     '''
     returns a list with a list of values per row
+    Since the array is 10k elements originally, 
+    this will only list neccesary elements.
+    This list will be passed to the client
     '''
     tubes_per_row = memObj["tubes_per_row"]
     tubes_row_values = memObj["tube_state"]
@@ -163,3 +174,25 @@ def filter_tube_state(memObj):
         start = start + tubes
         result.extend(_temp)
     return result
+
+
+def write_database(response_object, dbo, client):
+    reactor = Plc_db.query.filter_by(plc_id=client.id).first()
+    if reactor is None:
+        dbo.plc_id = client.id  # add plc id as FK to dataset
+        db.session.add(dbo)
+        db.session.commit()
+        result = plc_db_to_object(dbo)
+        response_object['status'] = 'success'
+        response_object['message'] = 'PLC data saved in db'
+        response_object['plc db'] = result
+    else:
+        # update values with new readings
+        reactor.tube_state_client = dbo.tube_state_client
+        db.session.add(reactor)
+        db.session.commit()
+        response_object['status'] = 'success'
+        response_object['message'] = 'PLC data updated in db'
+        result = plc_db_to_object(reactor)
+        response_object['plc db'] = result
+    return response_object

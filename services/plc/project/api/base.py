@@ -1,11 +1,9 @@
 # services/plc/project/api/base.py
 
-from sqlalchemy import exc
 from flask import Blueprint, jsonify, render_template
 
-from project import db
-from project.api.models import Plc, PLCDBSchema, Plc_db
-from project.api.utils import plc_connect, read_plc
+from project.api.models import Plc, PLCDBSchema
+from project.api.utils import plc_connect, read_plc, write_database
 
 
 plc_blueprint = Blueprint('plc', __name__, template_folder='./templates')
@@ -15,51 +13,26 @@ plc_blueprint = Blueprint('plc', __name__, template_folder='./templates')
 def get_status():
     response_object = {
         'status': 'fail',
-        'message': 'An error occured.'
+        'message': 'No PLC configured in database'
     }
     try:
         client = Plc.query.first()
         plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
-        if not client:  # client will always be set, even empty
-            response_object['message'] = 'No PLC configured in database'
-            return jsonify(response_object), 400
-        if not plc:
-            response_object['message'] = 'Could not connect to plc'
+        if plc is None:
+            response_object['message'] = 'Connection to PLC failed'
             return jsonify(response_object), 400
         else:
+            response_object['message'] = 'hiep hiep'
+            response_object['status'] = 'success'
+            # return jsonify(response_object), 200
             dbo = read_plc(plc)
             if not dbo:
                 response_object['message'] = 'Could not retrieve data from plc'
                 return jsonify(response_object), 400
             else:
-                try:
-                    reactor = Plc_db.query.filter_by(plc_id=client.id).first()
-                    if not reactor:
-                        dbo.plc_id = client.id  # add plc id as FK to dataset
-                        db.session.add(dbo)
-                        db.session.commit()
-                        plcdb_schema = PLCDBSchema()
-                        result = plcdb_schema.dump(dbo)
-                        response_object['status'] = 'success'
-                        response_object['message'] = 'PLC data saved in db'
-                        response_object['plc db'] = result
-                        return jsonify(response_object), 200
-                    else:
-                        # update values with new readings
-                        reactor.tube_state_client = dbo.tube_state_client
-                        db.session.add(reactor)
-                        db.session.commit()
-                        response_object['status'] = 'success'
-                        response_object['message'] = 'PLC data updated in db'
-                        plcdb_schema = PLCDBSchema()
-                        result = plcdb_schema.dump(reactor)
-                        response_object['plc db'] = result
-                        return jsonify(response_object), 200
-                except (exc.IntegrityError, ValueError, Exception) as e:
-                    # db.session.rollback()
-                    response_object['error'] = e
-                    return jsonify(response_object), 400
-            plc.disconnect()
+                result = write_database(response_object, dbo, client)
+                return jsonify(result), 200
+                plc.disconnect()
     except Exception as e:
         return jsonify(response_object), 400
 
