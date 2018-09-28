@@ -67,7 +67,7 @@ def map_bytearray_with_layout(client, db_number, layout, _bytearray, size):
     return memObj
 
 
-def map_memory_to_dbo(memObj, client, filtered_tubes):
+def map_memory_to_dbo(memObj, filtered_tubes):
     dbo = Plc_db(
             tubes_per_row=memObj["tubes_per_row"],
             tube_ROW=memObj["tube_ROW"],
@@ -139,7 +139,7 @@ def read_plc(client):
     memObj = map_bytearray_with_layout(client, db_number,
                                        layout, _bytearray, size)
     state_filter = filter_tube_state(memObj)  # add filtered state to memObj
-    dbo = map_memory_to_dbo(memObj, client, state_filter)
+    dbo = map_memory_to_dbo(memObj, state_filter)
     return dbo
 
 
