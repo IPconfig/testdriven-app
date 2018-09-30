@@ -203,7 +203,7 @@ def write_database(response_object, dbo, client):
         result = plc_db_to_object(dbo)
         response_object['status'] = 'success'
         response_object['message'] = 'PLC data saved in db'
-        response_object['plc db'] = result
+        response_object['plc_db'] = result
     else:
         # update values with new readings
         reactor.tube_state_client = dbo.tube_state_client
@@ -212,5 +212,5 @@ def write_database(response_object, dbo, client):
         response_object['status'] = 'success'
         response_object['message'] = 'PLC data updated in db'
         result = plc_db_to_object(reactor)
-        response_object['plc db'] = result
+        response_object['plc_db'] = result
     return response_object
