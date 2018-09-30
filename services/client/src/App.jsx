@@ -9,6 +9,7 @@ import NavBar from './components/NavBar';
 import Form from './components/Form';
 import Logout from './components/Logout';
 import UserStatus from './components/UserStatus';
+import Tubes from './components/test';
 
 
 class App extends Component {
@@ -16,6 +17,7 @@ class App extends Component {
     super();
     this.state = {
       users: [],
+      tube_states: [],
       username: '',
       email: '',
       title: 'My Site.io',
@@ -125,6 +127,9 @@ class App extends Component {
                     <UsersList
                       users={this.state.users}
                     />
+                  )} />
+                  <Route exact path='/test' render={() => (
+                    <Tubes tube_states={this.state.tube_states}/>
                   )} />
                   <Route exact path='/about' component={About}/>
                   <Route exact path='/overview' component={Overview}/>
