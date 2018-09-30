@@ -9,7 +9,6 @@ import NavBar from './components/NavBar';
 import Form from './components/Form';
 import Logout from './components/Logout';
 import UserStatus from './components/UserStatus';
-import Tubes from './components/test';
 
 
 class App extends Component {
@@ -128,11 +127,10 @@ class App extends Component {
                       users={this.state.users}
                     />
                   )} />
-                  <Route exact path='/test' render={() => (
-                    <Tubes tube_states={this.state.tube_states}/>
-                  )} />
                   <Route exact path='/about' component={About}/>
-                  <Route exact path='/overview' component={Overview}/>
+                  <Route exact path='/overview' render={() => (
+                    <Overview tube_states={this.state.tube_states}/>
+                  )} />
                   <Route exact path='/register' render={() => (
                     <Form
                       formType={'Register'}

@@ -34,7 +34,7 @@
     /* margin: 1px;
 } */
 
-.square {
+.tube {
     /* background: #fff; */
     border: 1px solid #999;
     float: left;
@@ -49,13 +49,13 @@
     width: 34px;
   }
 
-  .board-row:after {
+  .reactor-row:after {
     clear: both;
     content: "";
     display: table;
   }
 
-  .game {
+  .reactor {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
   }
