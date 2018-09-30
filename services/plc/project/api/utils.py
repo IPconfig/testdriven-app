@@ -40,7 +40,7 @@ def map_bytearray_with_layout(client, db_number, layout, _bytearray, size):
         db_number (int): the database of the plc
         layout: layout specification
         _bytearray: bytearray from the plc
-        size: 
+        size:
     """
 
     # _bytearray = client.db_read(7, 0, 62014)
@@ -178,7 +178,7 @@ def write_plc(client):
 def filter_tube_state(memObj):
     '''
     returns a list with a list of values per row
-    Since the array is 10k elements originally, 
+    Since the array is 10k elements originally,
     this will only list neccesary elements.
     This list will be passed to the client
     '''

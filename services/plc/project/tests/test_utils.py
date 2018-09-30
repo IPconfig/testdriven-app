@@ -64,7 +64,7 @@ class TestUtils(BaseTestCase):
         memObj = map_bytearray_with_layout(self.client,
                                            db_number, layout, _bytearray, size)
         filtered_tubes = [1, 2]
-        dbo = map_memory_to_dbo(memObj, self.client, filtered_tubes)
+        dbo = map_memory_to_dbo(memObj, filtered_tubes)
         self.assertEqual(dbo.tubes_per_row, memObj['tubes_per_row'])
         self.assertEqual(dbo.tube_ROW, memObj['tube_ROW'])
         self.assertEqual(dbo.tube_number_in_row, memObj['tube_number_in_row'])

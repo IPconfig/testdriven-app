@@ -37,6 +37,29 @@ def get_status():
         return jsonify(response_object), 400
 
 
+@plc_blueprint.route('/plc/restore', methods=['GET'])
+def restore_db():
+    response_object = {
+        'status': 'fail',
+        'message': 'An error occured.'
+    }
+    try:
+        client = Plc.query.first()
+        plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
+        if plc is None:
+            response_object['message'] = 'Connection to PLC failed'
+            return jsonify(response_object), 400
+        else:
+            write_plc(plc)
+            plc.disconnect()
+            response_object['status'] = 'success'
+            response_object['message'] = 'dbo set to plc memory'
+            return jsonify(response_object), 200
+    except Exception:
+        return jsonify(response_object), 400
+
+
+# Route to the old layout
 @plc_blueprint.route('/plc/overview', methods=['GET'])
 def overview():
     plc = plc_connect('192.168.0.1', 0, 0)
@@ -44,53 +67,7 @@ def overview():
     plcdb_schema = PLCDBSchema(only=['tube_state_client'])
     result = plcdb_schema.dump(response)
     result = result['tube_state_client']
-    # return jsonify(result), 200
     return render_template('overview.html', values=result)
-
-
-@plc_blueprint.route('/plc/restore', methods=['GET'])
-def restore_db():
-    response_object = {
-        'status': 'fail',
-        'message': 'An error occured.'
-    }
-    # try:
-    client = Plc.query.first()
-    plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
-    if plc is None:
-        response_object['message'] = 'Connection to PLC failed'
-        return jsonify(response_object), 400
-    else:
-        write_plc(plc)
-        plc.disconnect()
-        response_object['status'] = 'success'
-        response_object['message'] = 'dbo set to plc memory'
-        return jsonify(response_object), 200
-
-    # except (ValueError, Exception) as e:
-    #     response_object['error'] = e
-    #     return jsonify(response_object), 400
-
-
-# @plc_blueprint.route('/plc/new', methods=['GET'])
-# def new():
-#     response_object = {
-#         'status': 'fail',
-#         'message': 'An error occured.'
-#     }
-#     try:
-#         plc = plc_connect('192.168.0.1', 0, 0)
-#         if not plc:
-#             response_object['message'] = 'Could not connect to plc'
-#             return jsonify(response_object), 400
-#         else:
-#             response = plc_read_values(plc)
-#             response_object['status'] = 'success'
-#             response_object['message'] = 'Successfully scraped data.'
-#             response_object['values'] = response
-#             return jsonify(response_object), 200
-#     except Exception as e:
-#         return jsonify(response_object), 400
 
 
 @plc_blueprint.route('/plc/ping', methods=['GET'])

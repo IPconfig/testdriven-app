@@ -17,6 +17,7 @@ migrate = Migrate()
 toolbar = DebugToolbarExtension()
 ma = Marshmallow()
 
+
 def create_app(script_info=None):
 
     # instantiate the app
