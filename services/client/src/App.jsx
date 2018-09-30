@@ -42,6 +42,12 @@ class App extends Component {
   componentDidMount() {
     this.clearFormState();
     this.getUsers();
+    this.getPLCData();
+  };
+  getPLCData(){
+    axios.get(`${process.env.REACT_APP_PLC_SERVICE_URL}/plc`)
+    .then((res) => { this.setState({ tube_states: res.data.plc_db.tube_state_client }); })
+    .catch((err) => { console.log(err); });
   };
   getUsers() {
     axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/users`)

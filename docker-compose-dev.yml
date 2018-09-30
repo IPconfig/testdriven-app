@@ -53,6 +53,7 @@ services:
     environment:
       - NODE_ENV=development
       - REACT_APP_USERS_SERVICE_URL=http://localhost
+      - REACT_APP_PLC_SERVICE_URL=http://localhost
     depends_on:
       - users
       - plc
