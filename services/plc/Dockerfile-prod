@@ -1,10 +1,17 @@
 # base image
 FROM python:3.6.5-slim
 
-# install netcat
+# install tools to add apt-repository
 RUN apt-get update && \
-    apt-get -y install netcat && \
+    apt-get -y install software-properties-common && \
     apt-get clean
+
+# add Snap7 library
+ RUN add-apt-repository ppa:gijzelaar/snap7 && \
+     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CAFC44EE7F39098CE6EC229CCA70E6A9087475A0 && \
+     sed -i 's/cosmic/yakkety/g' /etc/apt/sources.list.d/gijzelaar-ubuntu-snap7-cosmic.list && \
+     apt-get update && \
+     apt-get -y install libsnap7-dev
 
 # set working directory
 WORKDIR /usr/src/app

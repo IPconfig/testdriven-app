@@ -1,18 +1,19 @@
 # base image
 FROM python:3.6.5-slim
 
-# install netcat and tools to add apt-repository
+# install tools to add apt-repository
 RUN apt-get update && \
-    apt-get -y install netcat software-properties-common && \
+    apt-get -y install software-properties-common && \
     apt-get clean
 
-# add Snap7 Library
-# Replace cosmic (Ubuntu) with bionic (Debian) release to force package install
+# add Snap7 Library; create a FrankenDebian :)
+# Replace cosmic (Debian) with yakkety (Ubuntu) release to force package install
 # See http://www.webupd8.org/2014/10/how-to-add-launchpad-ppas-in-debian-via.html
-RUN add-apt-repository ppa:gijzelaar/snap7 && \
-      sed -i 's/cosmic/bionic/g' /etc/apt/sources.list.d/gijzelaar-ubuntu-snap7-cosmic.list && \
-      apt-get update && \
-      apt-get -y --allow-unauthenticated install libsnap7-dev
+ RUN add-apt-repository ppa:gijzelaar/snap7 && \
+     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CAFC44EE7F39098CE6EC229CCA70E6A9087475A0 && \
+     sed -i 's/cosmic/yakkety/g' /etc/apt/sources.list.d/gijzelaar-ubuntu-snap7-cosmic.list && \
+     apt-get update && \
+     apt-get -y install libsnap7-dev
 
 # set working directory
 WORKDIR /usr/src/app
