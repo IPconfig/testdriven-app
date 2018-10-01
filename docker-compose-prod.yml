@@ -35,6 +35,7 @@ services:
       args:
         - NODE_ENV=production
         - REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
+        - REACT_APP_PLC_SERVICE_URL=${REACT_APP_PLC_SERVICE_URL}
     expose:
       - 80
     depends_on:

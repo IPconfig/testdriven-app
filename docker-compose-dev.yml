@@ -39,6 +39,7 @@ services:
     depends_on:
       - users
       - client
+      - plc
 
   client:
     build:
@@ -52,5 +53,35 @@ services:
     environment:
       - NODE_ENV=development
       - REACT_APP_USERS_SERVICE_URL=http://localhost
+      - REACT_APP_PLC_SERVICE_URL=http://localhost
     depends_on:
       - users
+      - plc
+  
+  plc:
+    build:
+      context: ./services/plc
+      dockerfile: Dockerfile-dev
+    volumes:
+      - './services/plc:/usr/src/app'
+    ports:
+      - 5002:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - USERS_SERVICE_URL=http://users:5000
+      - SECRET_KEY=my_precious
+      - DATABASE_URL=postgres://postgres:postgres@plc-db:5432/plc_dev
+      - DATABASE_TEST_URL=postgres://postgres:postgres@plc-db:5432/plc_test
+    depends_on:
+      - plc-db
+
+  plc-db:
+    build:
+      context: ./services/plc/project/db
+      dockerfile: Dockerfile
+    ports:
+      - 5436:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres

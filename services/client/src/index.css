@@ -1,0 +1,61 @@
+.state0 {
+  background-color: hsl(0, 0%, 96%);
+}
+.state1 {
+  background-color: hsl(141, 71%, 48%);
+}
+.state2 {
+  background-color: hsl(357, 100%, 57%);
+}
+.state3 {
+  background-color: hsl(48, 100%, 67%);
+}
+.state4 {
+  background-color: hsl(204, 86%, 53%);
+}
+.state5 {
+  background-color: hsl(0, 0%, 21%);
+}
+.overview {
+    text-align: center;
+    position: absolute;
+}
+
+.row {
+    display: block;
+    white-space: nowrap;
+    margin: 1px;
+}
+
+/* .element {
+    display: inline-block;
+    width: 10px; 
+    padding-bottom: 10px; /* = width for a square aspect ratio */
+    /* margin: 1px;
+} */
+
+.tube {
+    /* background: #fff; */
+    border: 1px solid #999;
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 34px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width: 34px;
+  }
+
+  .reactor-row:after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+
+  .reactor {
+    display: flex;
+    flex-direction: column;
+  }

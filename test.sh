@@ -17,6 +17,10 @@ server() {
   inspect $? users
   docker-compose -f docker-compose-dev.yml run users flake8 project
   inspect $? users-lint
+  docker-compose -f docker-compose-dev.yml run plc python manage.py test
+  inspect $? plc
+  docker-compose -f docker-compose-dev.yml run plc flake8 project
+  inspect $? plc-lint
   docker-compose -f docker-compose-dev.yml down
 }
 

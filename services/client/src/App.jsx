@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import UsersList from './components/UsersList';
 import About from './components/About';
+import Overview from './components/Overview';
 import NavBar from './components/NavBar';
 import Form from './components/forms/Form';
 import Logout from './components/Logout';
@@ -16,6 +17,7 @@ class App extends Component {
     super();
     this.state = {
       users: [],
+      tube_states: [],
       title: 'TestDriven.io',
       isAuthenticated: false,
       messageName: null,
@@ -33,6 +35,12 @@ class App extends Component {
   };
   componentDidMount() {
     this.getUsers();
+    this.getPLCData();
+  };
+  getPLCData(){
+    axios.get(`${process.env.REACT_APP_PLC_SERVICE_URL}/plc`)
+    .then((res) => { this.setState({ tube_states: res.data.plc_db.tube_state_client }); })
+    .catch((err) => { });
   };
   getUsers() {
     axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/users`)
@@ -90,6 +98,9 @@ class App extends Component {
                     />
                   )} />
                   <Route exact path='/about' component={About}/>
+                  <Route exact path='/overview' render={() => (
+                    <Overview tube_states={this.state.tube_states}/>
+                  )} />
                   <Route exact path='/register' render={() => (
                     <Form
                       formType={'Register'}

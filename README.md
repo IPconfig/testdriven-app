@@ -93,6 +93,7 @@ $ docker-compose -f docker-compose-dev.yml run users flake8 project
 Set env variable:
 ```bash
 $ export REACT_APP_USERS_SERVICE_URL=http://localhost
+$ export REACT_APP_PLC_SERVICE_URL=http://localhost
 ```
 Build and run:
 ```bash
