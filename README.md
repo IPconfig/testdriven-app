@@ -1,5 +1,12 @@
 # Microservices with Docker, Flask and React
 
+Build on arm32v7 (armv7l) or arm32v6 (armv6) for rpi3+. arm64v8 (aarch6) doesn't work since Raspbian is still 32 bit
+Not all containers are build for every architecture. Check the [postgres manifest](https://github.com/docker-library/official-images/blob/master/library/postgres) or the [python manifest](https://github.com/docker-library/official-images/blob/master/library/python) to see supported architectures.
+For instance, alpine builds do not support arm32v7
+
+To run these images on MacOS, no further actions are needed when Docker for Mac is installed.
+For linux, see [here](https://lobradov.github.io/Building-docker-multiarch-images/)
+
 [![Build Status](https://travis-ci.com/IPconfig/testdriven-app.svg?branch=master)](https://travis-ci.com/IPconfig/testdriven-app)
 
 ## Environment Variables
