@@ -5,7 +5,7 @@
 ## Environment Variables
 
 ### Secret Key
-This key should be truly random, so we'll set the key loaclly and pull it into the container at build time.
+This key should be truly random, so we'll set the key locally and pull it into the container at build time.
 To create a key, open the Python shell and run:
 ```python
 >>> import binascii
@@ -72,6 +72,7 @@ Test:
 $ docker-compose -f docker-compose-dev.yml exec users-db psql -U postgres
 ```
 ### Users
+Replace users for plc in the below commands to target PLC
 Build and run:
 ```bash
 $ docker-compose -f docker-compose-dev.yml up -d --build users
