@@ -3,7 +3,7 @@ FROM arm32v7/python:3.7.0-stretch
 
 # install tools to add apt-repository
 RUN apt-get update && \
-    apt-get -y install software-properties-common && \
+    apt-get -y install netcat devscripts build-essential && \
     apt-get clean
 
 # add Snap7 library
