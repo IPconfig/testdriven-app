@@ -26,6 +26,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes: 
+      - users-db:/var/lib/postgresql/data
 
   nginx:
     build:
@@ -79,3 +81,9 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes: 
+      - plc-db:/var/lib/postgresql/data
+
+volumes:
+  users-db:
+  plc-db:
