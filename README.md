@@ -69,7 +69,8 @@ $ docker rmi $(docker images -q)
 ```
 ## Individual Services
 The following commands are for spinning up individual containers
-### Users DB
+### Users DB / PLC DB
+Replace users-db for plc-db in the below commands to target PLC DB
 Build and run:
 ```bash
 $ docker-compose -f docker-compose-dev.yml up -d --build users-db
@@ -78,7 +79,7 @@ Test:
 ```bash
 $ docker-compose -f docker-compose-dev.yml exec users-db psql -U postgres
 ```
-### Users
+### Users / PLC
 Replace users for plc in the below commands to target PLC
 Build and run:
 ```bash
