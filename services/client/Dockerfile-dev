@@ -1,4 +1,4 @@
-# base image
+# base image. You'll get some qemu errors on arm build..
 FROM node:10.11.0-alpine
 
 # set working directory

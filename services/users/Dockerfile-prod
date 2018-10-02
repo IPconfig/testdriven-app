@@ -1,5 +1,5 @@
 # base image
-FROM python:3.7.0
+FROM arm32v7/python:3.7.0-stretch
 
 # update apt
 RUN apt-get update && \
