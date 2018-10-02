@@ -37,6 +37,7 @@ services:
     depends_on:
       - users
       - client
+      - plc
 
   client:
     container_name: client
@@ -51,3 +52,30 @@ services:
       - 80
     depends_on:
       - users
+      - plc
+
+  plc:
+    build:
+      context: ./services/plc
+      dockerfile: Dockerfile-prod
+    expose:
+      - 5000
+    environment:
+      - FLASK_ENV=production
+      - APP_SETTINGS=project.config.ProductionConfig
+      - USERS_SERVICE_URL=http://users:5000
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=postgres://postgres:postgres@plc-db:5432/plc_prod
+      - DATABASE_TEST_URL=postgres://postgres:postgres@plc-db:5432/plc_test
+    depends_on:
+      - plc-db
+
+  plc-db:
+    build:
+      context: ./services/plc/project/db
+      dockerfile: Dockerfile
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres

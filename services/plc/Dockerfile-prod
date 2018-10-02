@@ -6,12 +6,11 @@ RUN apt-get update && \
     apt-get -y install netcat devscripts build-essential && \
     apt-get clean
 
-# add Snap7 library
- RUN add-apt-repository ppa:gijzelaar/snap7 && \
-     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CAFC44EE7F39098CE6EC229CCA70E6A9087475A0 && \
-     sed -i 's/cosmic/yakkety/g' /etc/apt/sources.list.d/gijzelaar-ubuntu-snap7-cosmic.list && \
-     apt-get update && \
-     apt-get -y install libsnap7-dev
+RUN wget -O snap7-iot-arm-1.4.2.tar.gz https://sourceforge.net/projects/snap7/files/Snap7-IoT/snap7-iot-arm/snap7-iot-arm-1.4.2.tar.gz/download
+RUN tar -zxvf snap7-iot-arm-1.4.2.tar.gz
+RUN cd snap7-iot-arm-1.4.2/build/unix/ && make -f arm_v7_linux.mk all && \
+    cp ../bin/arm_v7-linux/libsnap7.so /usr/lib/libsnap7.so && \
+    cp ../bin/arm_v7-linux/libsnap7.so /usr/local/lib/libsnap7.so
 
 # set working directory
 WORKDIR /usr/src/app
