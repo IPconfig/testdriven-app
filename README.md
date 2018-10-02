@@ -38,8 +38,8 @@ docker-compose -f docker-compose-dev.yml up -d
 ```
 Create and seed the database:
 ```bash
-$ docker-compose -f docker-compose-dev.yml run users python manage.py recreate_db
-$ docker-compose -f docker-compose-dev.yml run users python manage.py seed_db
+$ docker-compose -f docker-compose-dev.yml run users python manage.py recreate-db
+$ docker-compose -f docker-compose-dev.yml run users python manage.py seed-db
 ```
 Run the unit and integration tests:
 ```bash
