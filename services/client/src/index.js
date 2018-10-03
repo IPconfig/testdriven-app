@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import App from './App.jsx';
 import './index.css';
+import './bulma.min.css';
 
 ReactDOM.render((
   <Router>

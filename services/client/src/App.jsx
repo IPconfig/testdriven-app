@@ -18,7 +18,7 @@ class App extends Component {
     this.state = {
       users: [],
       tube_states: [],
-      title: 'TestDriven.io',
+      title: 'ButterOverflow.io',
       isAuthenticated: false,
       messageName: null,
       messageType: null,
