@@ -1,5 +1,5 @@
 # base image
-FROM arm32v7/python:3.7.0-stretch
+FROM python:3.7.0-stretch
 
 # update apt (netcat is to check if the db is up)
 RUN apt-get update && \

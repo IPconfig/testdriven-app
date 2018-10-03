@@ -32,7 +32,7 @@ RUN npm run build
 #########
 
 # base image
-FROM arm32v6/nginx:1.15.4-alpine
+FROM nginx:1.15.4-alpine
 
 # update nginx conf
 RUN rm -rf /etc/nginx/conf.d
