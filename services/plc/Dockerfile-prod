@@ -10,7 +10,9 @@ RUN wget -O snap7-iot-arm-1.4.2.tar.gz https://sourceforge.net/projects/snap7/fi
 RUN tar -zxvf snap7-iot-arm-1.4.2.tar.gz
 RUN cd snap7-iot-arm-1.4.2/build/unix/ && make -f arm_v7_linux.mk all && \
     cp ../bin/arm_v7-linux/libsnap7.so /usr/lib/libsnap7.so && \
-    cp ../bin/arm_v7-linux/libsnap7.so /usr/local/lib/libsnap7.so
+    cp ../bin/arm_v7-linux/libsnap7.so /usr/local/lib/libsnap7.so && \
+    ldconfig
+    
 
 # set working directory
 WORKDIR /usr/src/app
