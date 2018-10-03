@@ -2,9 +2,10 @@
 FROM arm32v7/python:3.7.0-stretch
 
 # install tools to add apt-repository
-RUN apt-get update && \
-    apt-get -y install netcat devscripts build-essential && \
-    apt-get clean
+RUN apt-get update
+RUN apt-get -y install netcat
+RUN apt-get -y install build-essential
+RUN apt-get clean
 
 RUN wget -O snap7-iot-arm-1.4.2.tar.gz https://sourceforge.net/projects/snap7/files/Snap7-IoT/snap7-iot-arm/snap7-iot-arm-1.4.2.tar.gz/download
 RUN tar -zxvf snap7-iot-arm-1.4.2.tar.gz
