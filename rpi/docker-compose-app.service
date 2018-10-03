@@ -1,0 +1,12 @@
+[Unit]
+Description=Docker Compose Application Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart=/home/pi/app/rpi/service start
+ExecStop=/home/pi/app/rpi/service stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

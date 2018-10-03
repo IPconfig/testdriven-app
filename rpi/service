@@ -1,0 +1,22 @@
+!/usr/bin/env bash
+#
+# Bash script to startup docker-compose
+
+declare -r DIR="/home/pi/app"
+ 
+start() {
+    cd ${DIR}
+    docker-compose -f docker-compose-prod.yml up -d
+}
+ 
+stop() {
+    cd ${DIR}
+    docker-compose -f docker-compose-prod.yml stop
+}
+ 
+case $1 in
+    start) start;;
+    stop) stop;;
+    "") start;;
+    *) echo "Usage: ./service start|stop"
+esac
