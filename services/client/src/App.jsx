@@ -74,11 +74,13 @@ class App extends Component {
   };
   render() {
     return (
+      /*
       <div>
         <NavBar
           title={this.state.title}
           isAuthenticated={this.state.isAuthenticated}
         />
+        */
         <section className="section">
           <div className="container">
             {this.state.messageName && this.state.messageType &&
@@ -133,7 +135,7 @@ class App extends Component {
             </div>
           </div>
         </section>
-      </div>
+      //</div>
     )
   }
 };
