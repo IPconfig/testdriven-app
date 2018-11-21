@@ -10,6 +10,7 @@ import Form from './components/forms/Form';
 import Logout from './components/Logout';
 import UserStatus from './components/UserStatus';
 import Message from './components/Message';
+import Restore from './components/Restore';
 
 
 class App extends Component {
@@ -98,7 +99,8 @@ class App extends Component {
                     /*<UsersList
                       users={this.state.users}
                     />*/
-                    <Overview tube_states={this.state.tube_states}/>
+                    <Restore data={this.state.tube_states}
+                      createMessage={this.createMessage}/>
                   )} />
                   <Route exact path='/about' component={About}/>
                   <Route exact path='/overview' render={() => (
