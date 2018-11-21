@@ -54,9 +54,7 @@ echo 'static ip_address=192.168.0.10' >> /etc/dhcpcd.conf
 $ wget https://github.com/IPconfig/testdriven-app/archive/master.zip && \
 unzip -o master && \
 mv ~/testdriven-app-master ~/app --no-target-directory && \
-rm master.zip && \
-chmod +x ~/app/rpi/installer.sh && \
-sudo ~/app/rpi/installer.sh
+rm master.zip
 ```
 3. Set SECRET_KEY variable (See README.MD). The REACT_APP_SERVICE_URLS can be blank on the Raspberry Pi
 4. Build the app manually for the first time to the environment variables get set.
@@ -65,9 +63,9 @@ sudo ~/app/rpi/installer.sh
    - Create (and seed) the databases: 
         ```
         $ docker-compose -f docker-compose-prod.yml run users python manage.py recreate-db && \
-docker-compose -f docker-compose-prod.yml run plc python manage.py recreate-db && \
-docker-compose -f docker-compose-prod.yml run users python manage.py seed-db && \
-docker-compose -f docker-compose-prod.yml run plc python manage.py seed-db
+        docker-compose -f docker-compose-prod.yml run plc python manage.py recreate-db && \
+        docker-compose -f docker-compose-prod.yml run users python manage.py seed-db && \
+        docker-compose -f docker-compose-prod.yml run plc python manage.py seed-db
         ```
    - Verify that everything is okay and shutdown: `docker-compose -f docker-compose-prod.yml down`
 
