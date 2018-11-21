@@ -100,12 +100,15 @@ class App extends Component {
                     /*<UsersList
                       users={this.state.users}
                     />*/
-                    <Restore data={this.state.tube_states}
-                      createMessage={this.createMessage}/>
+                    <Overview tube_states={this.state.tube_states}/>
                   )} />
                   <Route exact path='/about' component={About}/>
                   <Route exact path='/overview' render={() => (
                     <Overview tube_states={this.state.tube_states}/>
+                  )} />
+                  <Route exact path='/restore' render={() => (
+                    <Restore data={this.state.tube_states}
+                    createMessage={this.createMessage}/>
                   )} />
                   <Route exact path='/register' render={() => (
                     <Form
