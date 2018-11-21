@@ -77,3 +77,16 @@ rm master.zip
 5. Start the service: `$ sudo systemctl start docker-compose-app`
 6. Check the service: `$ sudo systemctl status docker-compose-app`
 7. Make sure the app is working. You're done!
+
+
+### Upgrade app
+1. SSH into the rpi and stop the docker containers: 
+   - Open terminal and SSH: `$ ssh pi@raspberrypi.local`
+   - Stop the services: `$ docker-compose -f ~/app/docker-compose-prod.yml down`
+2. Remove the app directory: `$ rm ~/app -r`
+3. Download new version of the services: `wget https://github.com/IPconfig/testdriven-app/archive/master.zip && \
+unzip -o master && \
+mv ~/testdriven-app-master ~/app --no-target-directory && \
+rm master.zip`
+4. Build the services: `$ docker-compose -f ~/app/docker-compose-prod.yml up -d --build`
+5. Verifiy if services run after a `$ sudo reboot`
