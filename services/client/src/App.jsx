@@ -24,6 +24,7 @@ class App extends Component {
       messageName: null,
       messageType: null,
     };
+    this.getPLCData = this.getPLCData.bind(this);
     this.logoutUser = this.logoutUser.bind(this);
     this.loginUser = this.loginUser.bind(this);
     this.createMessage = this.createMessage.bind(this);
@@ -91,8 +92,8 @@ class App extends Component {
                 removeMessage={this.removeMessage}
               />
             }
-            <div className="columns">
-              <div className="column is-half">
+            <div className="columns is-centered">
+             {/* <div className="column is-half"> */ }
                 <br/>
                 <Switch>
                   <Route exact path='/' render={() => (
@@ -134,7 +135,7 @@ class App extends Component {
                     />
                   )} />
                 </Switch>
-              </div>
+           {/*   </div>  div of the is-half column */ }
             </div>
           </div>
         </section>

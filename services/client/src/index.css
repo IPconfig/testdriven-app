@@ -22,8 +22,8 @@
 }
 
 .row {
-    display: block;
-    white-space: nowrap;
+    clear: both;
+    content: "";
     margin: 1px;
 }
 
@@ -56,6 +56,7 @@
   }
 
   .reactor {
-    display: flex;
+    margin: auto;
+    display: inline-block;
     flex-direction: column;
   }

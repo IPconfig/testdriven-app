@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import axios from 'axios';
 
 // component that will display the data
@@ -9,17 +8,10 @@ class Restore extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [], // will hold the results from our ajax call
+      data: [],
       loading: false, // will be true when ajax request is running
     }
   }
-
-  getPLCData(){
-    axios.get(`${process.env.REACT_APP_PLC_SERVICE_URL}/plc`)
-    .then((res) => { console.log("getPLCData method start");
-    this.setState({ data: res.data.plc_db.tube_state_client }); })
-    .catch((err) => { });
-  };
 
   onClick = () => {
     /*
@@ -27,43 +19,43 @@ class Restore extends Component {
       of setState() to make the ajax request. Set loading = false after
       the request completes.
     */
-    this.setState({ loading: true }, () => { console.log("button clicked");
+    this.setState({ loading: true }, () => {
       axios.get(`${process.env.REACT_APP_PLC_SERVICE_URL}/plc/restore`)
         .then(result => {
-          console.log("getPLCData start")
-        this.getPLCData()
-        console.log("getPLCData executed")
+        this.props.getPLCData()
         this.setState({
           loading: false,
         })
-        console.log("loading state to false")
         this.props.createMessage('Database restored', 'success')
       })
       .catch((err) => { 
-        this.setState({ loading: false,})
-        console.log("error")
+        this.setState({ loading: false})
         this.props.createMessage('Database restore failed', 'danger');
       });
     });
   }
 
   render() {
-    const { data, loading } = this.state;
+    var data = this.props.data;
+    const { loading } = this.state;
 
     return (
-      <div>
+      <div className="column has-text-centered">
         <h1 className="title is-1">Reactor Overview</h1>
         <hr/><br/>
+          {/*
+          Check the length of the 'data' variable. If it exists, the table will be shown, else we can show the restore button
+        */}
+        {data.length ?  '' : <button className={ 'button is-primary is-info' + (loading ? ' is-loading' : '')} onClick={this.onClick}> restore Database</button> }
 
-        <button className={ 'button is-primary is-info' + (this.state.loading ? ' is-loading' : '')} onClick={this.onClick}>
-          restore Database
-        </button>
+        
+
 
         {/*
           Check the status of the 'loading' variable. If true, then display
           nothing. Otherwise, display the results.
         */}
-        {loading ? '' : <Overview tube_states={ data } />}
+        {loading ? '' : <Overview tube_states={ data} />}
       </div>
     );
   }
