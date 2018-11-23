@@ -84,9 +84,9 @@ rm master.zip
    - Open terminal and SSH: `$ ssh pi@raspberrypi.local`
    - Stop the services: `$ docker-compose -f ~/app/docker-compose-prod.yml down`
 2. Remove the app directory: `$ rm ~/app -r`
-3. Download new version of the services: `wget https://github.com/IPconfig/testdriven-app/archive/master.zip && \
-unzip -o master && \
-mv ~/testdriven-app-master ~/app --no-target-directory && \
+3. Download new version of the services: `wget https://github.com/IPconfig/testdriven-app/archive/master.zip &&
+unzip -o master &&
+mv ~/testdriven-app-master ~/app --no-target-directory &&
 rm master.zip`
 4. Build the services: `$ docker-compose -f ~/app/docker-compose-prod.yml up -d --build`
 5. Verifiy if services run after a `$ sudo reboot`
