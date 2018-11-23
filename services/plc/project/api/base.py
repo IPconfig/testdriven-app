@@ -67,6 +67,7 @@ def overview():
     plcdb_schema = PLCDBSchema(only=['tube_state_client'])
     result = plcdb_schema.dump(response)
     result = result['tube_state_client']
+    write_database(response_object, response, client)
     return render_template('overview.html', values=result)
 
 
