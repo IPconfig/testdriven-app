@@ -206,19 +206,11 @@ def write_database(response_object, dbo, client):
         response_object['plc_db'] = result
     else:
         # update values with new readings
-        reactor.tubes_per_row = dbo.tubes_per_row
-        reactor.tube_ROW = dbo.tube_ROW
-        reactor.tube_number_in_row = dbo.tube_number_in_row
-        reactor.tube_state = dbo.tube_state
-        reactor.total_tubes = dbo.total_tubes
-        reactor.counter = dbo.counter
-        reactor.debounce = dbo.debounce
-        reactor.total_rows = dbo.total_rows
-        reactor.coppycounter = dbo.coppycounter
-        reactor.overviewcoppied = dbo.overviewcoppied
-
-        reactor.tube_state_client = dbo.tube_state_client
-        db.session.add(reactor)
+        dbo.plc_id = reactor.plc_id
+        dbo.id = reactor.id
+        
+    #    reactor.tube_state_client = dbo.tube_state_client
+        db.session.add(dbo)
         db.session.commit()
         response_object['status'] = 'success'
         response_object['message'] = 'PLC data updated in db'
