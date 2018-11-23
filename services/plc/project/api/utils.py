@@ -196,21 +196,32 @@ def filter_tube_state(memObj):
 
 def write_database(response_object, dbo, client):
     reactor = Plc_db.query.filter_by(plc_id=client.id).first()
-   # if reactor is None:
-    dbo.plc_id = client.id  # add plc id as FK to dataset
-    db.session.add(dbo)
-    db.session.commit()
-    result = plc_db_to_object(dbo)
-    response_object['status'] = 'success'
-    response_object['message'] = 'PLC data saved in db'
-    response_object['plc_db'] = result
- #   else:
+    if reactor is None:
+        dbo.plc_id = client.id  # add plc id as FK to dataset
+        db.session.add(dbo)
+        db.session.commit()
+        result = plc_db_to_object(dbo)
+        response_object['status'] = 'success'
+        response_object['message'] = 'PLC data saved in db'
+        response_object['plc_db'] = result
+    else:
         # update values with new readings
- #       reactor.tube_state_client = dbo.tube_state_client
- #       db.session.add(reactor)
- #       db.session.commit()
- #       response_object['status'] = 'success'
- #       response_object['message'] = 'PLC data updated in db'
- #       result = plc_db_to_object(reactor)
- #       response_object['plc_db'] = result
+        reactor.tubes_per_row = dbo.tubes_per_row
+        reactor.tube_ROW = dbo.tube_ROW
+        reactor.tube_number_in_row = dbo.tube_number_in_row
+        reactor.tube_state = dbo.tube_state
+        reactor.total_tubes = dbo.total_tubes
+        reactor.counter = dbo.counter
+        reactor.debounce = dbo.debounce
+        reactor.total_rows = dbo.total_rows
+        reactor.coppycounter = dbo.coppycounter
+        reactor.overviewcoppied = dbo.overviewcoppied
+
+        reactor.tube_state_client = dbo.tube_state_client
+        db.session.add(reactor)
+        db.session.commit()
+        response_object['status'] = 'success'
+        response_object['message'] = 'PLC data updated in db'
+        result = plc_db_to_object(reactor)
+        response_object['plc_db'] = result
     return response_object
