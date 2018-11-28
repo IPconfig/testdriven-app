@@ -24,14 +24,13 @@ def get_status():
         else:
             response_object['message'] = 'hiep hiep'
             response_object['status'] = 'success'
-            # return jsonify(response_object), 200
             dbo = read_plc(plc)
             if not dbo:
                 response_object['message'] = 'Could not retrieve data from plc'
                 return jsonify(response_object), 400
             else:
-                result = write_database(response_object, dbo, client)
-                return jsonify(result), 200
+                response_object = write_database(response_object, dbo, client)
+                return jsonify(response_object), 200
                 plc.disconnect()
     except Exception as e:
         return jsonify(response_object), 400
