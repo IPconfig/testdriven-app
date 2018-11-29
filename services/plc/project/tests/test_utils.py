@@ -40,8 +40,7 @@ class TestUtils(BaseTestCase):
         db_number = 1
         size = 39
         _bytearray = _data
-        memObj = map_bytearray_with_layout(self.client,
-                                           db_number, layout, _bytearray, size)
+        memObj = map_bytearray_with_layout(db_number, layout, _bytearray, size)
         self.assertEqual(memObj['tubes_per_row'], [2, 2])
         self.assertEqual(memObj['tube_ROW'], [1, 1, 2, 2])
         self.assertEqual(memObj['tube_number_in_row'], [1, 2, 1, 2])
@@ -61,8 +60,7 @@ class TestUtils(BaseTestCase):
         db_number = 1
         size = 39
         _bytearray = _data
-        memObj = map_bytearray_with_layout(self.client,
-                                           db_number, layout, _bytearray, size)
+        memObj = map_bytearray_with_layout(db_number, layout, _bytearray, size)
         dbo = map_memory_to_dbo(memObj)
         self.assertEqual(dbo.tubes_per_row, memObj['tubes_per_row'])
         self.assertEqual(dbo.tube_ROW, memObj['tube_ROW'])
@@ -91,7 +89,6 @@ class TestUtils(BaseTestCase):
         db_number = 1
         size = 39
         _bytearray = _data
-        memObj = map_bytearray_with_layout(self.client,
-                                           db_number, layout, _bytearray, size)
+        memObj = map_bytearray_with_layout(db_number, layout, _bytearray, size)
         res = filter_tube_state(memObj['tubes_per_row'], memObj["tube_state"])
         self.assertEqual(res, [[4, 5], [3, 2]])

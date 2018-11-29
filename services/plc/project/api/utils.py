@@ -32,19 +32,21 @@ def plc_connect(adress, rack, slot):
         print(exc)
 
 
-def map_bytearray_with_layout(client, db_number, layout, _bytearray, size):
+def map_bytearray_with_layout(db_number, layout, _bytearray, size):
     """
     Read database, put in bytearray and turn it into an object
-    Args:
-        client (object): The client to use
-        db_number (int): the database of the plc
-        layout: layout specification
-        _bytearray: bytearray from the plc
-        size:
-    """
+    Parameters
+    ----------
 
-    # _bytearray = client.db_read(7, 0, 62014)
-    # size = 62012+2
+        db_number : Int
+            the database of the plc
+        layout : String
+            layout specification
+        _bytearray :
+            bytearray from the plc
+        size: Int
+            size of the specification
+    """
     _db = DB(
         db_number,              # the db we use
         _bytearray,             # bytearray from the plc
@@ -135,9 +137,9 @@ def read_plc(client):
 """
 
     _bytearray = client.db_read(db_number, 0, size)  # read plc data
-    memObj = map_bytearray_with_layout(client, db_number,
+    memObj = map_bytearray_with_layout(db_number,
                                        layout, _bytearray, size)
- #   state_filter = filter_tube_state(memObj["tubes_per_row"], memObj["tube_state"])  # add filtered state to memObj
+    # Create a database object, ready to serialize or store in db
     dbo = map_memory_to_dbo(memObj)
     return dbo
 
@@ -167,7 +169,7 @@ def write_plc(client):
     # read plc data, should be all zeroes after reboot
     _bytearray = client.db_read(db_number, 0, size)
     # make a mapping of the bytearray data
-    memObj = map_bytearray_with_layout(client, db_number,
+    memObj = map_bytearray_with_layout(db_number,
                                        layout, _bytearray, size)
     dbo = Plc_db.query.filter_by(plc_id=1).first()
     memObj = map_dbo_to_memory(dbo, memObj)
