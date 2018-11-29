@@ -41,7 +41,7 @@ class App extends Component {
   };
   getPLCData(){
     axios.get(`${process.env.REACT_APP_PLC_SERVICE_URL}/plc`)
-    .then((res) => { this.setState({ tube_states: res.data.plc_db.tube_state_client }); })
+    .then((res) => { this.setState({ tube_states: res.data.tube_values_filtered }); })
     .catch((err) => { });
   };
   getUsers() {

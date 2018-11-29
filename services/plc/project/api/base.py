@@ -31,7 +31,7 @@ def get_status():
                 return jsonify(response_object), 400
             else:
                 data = filter_tube_state(dbo.tubes_per_row,
-                                         dbo.tubes_row_values)
+                                         dbo.tube_state)
                 response_object['tube_values_filtered'] = data
                 response_object = save_to_db(response_object, dbo, client)
                 return jsonify(response_object), 200
@@ -68,7 +68,7 @@ def overview():
     plc = plc_connect('192.168.0.1', 0, 0)
     response = read_plc(plc)
     data = filter_tube_state(response.tubes_per_row,
-                             response.tubes_row_values)
+                             response.tube_state)
 #    plcdb_schema = PLCDBSchema(only=['tube_state_client'])
 #    result = plcdb_schema.dump(response)
 #    result = result['tube_state_client']
