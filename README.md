@@ -8,6 +8,7 @@ To run these images on MacOS, no further actions are needed when Docker for Mac 
 For linux, see [here](https://lobradov.github.io/Building-docker-multiarch-images/)
 
 [![Build Status](https://travis-ci.com/IPconfig/testdriven-app.svg?branch=master)](https://travis-ci.com/IPconfig/testdriven-app)
+(tests are broken right now since we need ARM containers and Travis can't run those)
 
 ## Environment Variables
 
