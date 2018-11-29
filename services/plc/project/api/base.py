@@ -33,6 +33,7 @@ def get_status():
                 data = filter_tube_state(dbo.tubes_per_row,
                                          dbo.tubes_row_values)
                 response_object['tube_values_filtered'] = data
+                response_object = save_to_db(response_object, dbo, client)
                 return jsonify(response_object), 200
                 plc.disconnect()
     except Exception as e:

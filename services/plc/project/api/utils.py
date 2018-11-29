@@ -190,7 +190,10 @@ def filter_tube_state(tubes_per_row, tubes_row_values):
     return result
 
 
-def write_database(response_object, dbo, client):
+def save_to_db(response_object, dbo, client):
+    '''
+    Saves a database object to the PLC Database
+    '''
     reactor = Plc_db.query.filter_by(plc_id=client.id).first()
     if reactor is None:
         dbo.plc_id = client.id  # add plc id as FK to dataset
@@ -210,7 +213,7 @@ def write_database(response_object, dbo, client):
         reactor.total_tubes = dbo.total_tubes
         reactor.tube_ROW = dbo.tube_ROW
         reactor.tube_number_in_row = dbo.tube_number_in_row
-        reactor.tube_state  = dbo.tube_state
+        reactor.tube_state = dbo.tube_state
         reactor.tubes_per_row = dbo.tubes_per_row
         db.session.add(reactor)
         db.session.commit()
