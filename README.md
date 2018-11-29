@@ -37,10 +37,12 @@ Run the containers:
 ```bash
 docker-compose -f docker-compose-dev.yml up -d
 ```
-Create and seed the database:
+Create and seed the databases:
 ```bash
-$ docker-compose -f docker-compose-dev.yml run users python manage.py recreate-db
-$ docker-compose -f docker-compose-dev.yml run users python manage.py seed-db
+$ docker-compose -f docker-compose-dev.yml run users python manage.py recreate-db && \
+docker-compose -f docker-compose-dev.yml run plc python manage.py recreate-db && \
+docker-compose -f docker-compose-dev.yml run users python manage.py seed-db && \
+docker-compose -f docker-compose-dev.yml run plc python manage.py seed-db
 ```
 Run the unit and integration tests:
 ```bash
@@ -76,7 +78,7 @@ Build and run:
 ```bash
 $ docker-compose -f docker-compose-dev.yml up -d --build users-db
 ```
-Test:
+Access the database via psql:
 ```bash
 $ docker-compose -f docker-compose-dev.yml exec users-db psql -U postgres
 ```
