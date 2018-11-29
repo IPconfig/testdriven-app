@@ -52,7 +52,7 @@ class Plc_db(db.Model):
     tube_ROW = db.Column(ARRAY(db.Integer), nullable=False)
     tube_number_in_row = db.Column(ARRAY(db.Integer), nullable=False)
     tube_state = db.Column(ARRAY(db.Integer), nullable=False)
-    tube_state_client = db.Column(ARRAY(db.Integer), nullable=False)
+#    tube_state_client = db.Column(ARRAY(db.Integer), nullable=True)
     total_tubes = db.Column(db.Integer, nullable=False)
     counter = db.Column(db.Integer, nullable=False)
     debounce = db.Column(db.Boolean, nullable=False)
@@ -81,7 +81,7 @@ class PLCDBSchema(ma.ModelSchema):
     # SQLAlchemy doesn't care if there are lists in a list
     # the generated field needs to be overwritten
     # else we'll get a validation error
-    tube_state_client = fields.List(fields.List(fields.Int()))
+ #   tube_state_client = fields.List(fields.List(fields.Int()))
 
     class Meta:
         model = Plc_db  # Bind the schema to the DB model

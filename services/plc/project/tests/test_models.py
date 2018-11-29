@@ -5,7 +5,7 @@ from project import db
 
 from project.api.models import Plc, Reactor
 from project.tests.base import BaseTestCase
-from project.tests.utils import add_plc, add_reactor
+from project.tests.utils import add_plc, add_reactor, add_plc_to_db
 
 
 class TestPlcModel(BaseTestCase):
@@ -54,3 +54,29 @@ class TestReactorModel(BaseTestCase):
         self.assertEqual(reactor[1].row, 2)
         self.assertEqual(reactor[1].values, [4, 1, 4])
         self.assertEqual(reactor[1].plc.id, 1)
+
+
+class TestPlc_dbModel(BaseTestCase):
+    '''
+    Store the whole PLC memory into the database and check its correctness
+    '''
+    def test_add_plc_to_database(self):
+        plc = add_plc('10.10.1.1', 0, 0)
+        dbo = add_plc_to_db(tubes_per_row=[1, 2, 1], tube_ROW=[1, 2, 2, 3],
+                            tube_number_in_row=[1, 1, 2, 1],
+                            tube_state=[4, 2, 3, 1], total_tubes=4,
+                            counter=1002, debounce=True, total_rows=3,
+                            coppycounter=1, overviewcoppied=256, plc=plc)
+        self.assertTrue(dbo.id)
+        self.assertEqual(dbo.tubes_per_row, [1, 2, 1])
+        self.assertEqual(dbo.tube_ROW, [1, 2, 2, 3])
+        self.assertEqual(dbo.tube_number_in_row, [1, 1, 2, 1])
+        self.assertEqual(dbo.tube_state, [4, 2, 3, 1])
+        self.assertEqual(dbo.total_tubes, 4)
+        self.assertEqual(dbo.counter, 1002)
+        self.assertEqual(dbo.debounce, True)
+        self.assertEqual(dbo.total_rows, 3)
+        self.assertEqual(dbo.coppycounter, 1)
+        self.assertEqual(dbo.overviewcoppied, 256)
+        self.assertEqual(dbo.plc.id, 1)
+        self.assertEqual(dbo.plc.ip, '10.10.1.1')
