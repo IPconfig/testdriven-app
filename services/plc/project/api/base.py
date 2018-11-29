@@ -3,7 +3,8 @@
 from flask import Blueprint, jsonify, render_template
 
 from project.api.models import Plc, PLCDBSchema
-from project.api.utils import plc_connect, read_plc, write_database, write_plc
+from project.api.utils import (plc_connect, read_plc, write_plc,
+                               save_to_db, filter_tube_state)
 
 
 plc_blueprint = Blueprint('plc', __name__, template_folder='./templates')
@@ -29,7 +30,9 @@ def get_status():
                 response_object['message'] = 'Could not retrieve data from plc'
                 return jsonify(response_object), 400
             else:
-                response_object = write_database(response_object, dbo, client)
+                data = filter_tube_state(dbo.tubes_per_row,
+                                         dbo.tubes_row_values)
+                response_object['tube_values_filtered'] = data
                 return jsonify(response_object), 200
                 plc.disconnect()
     except Exception as e:
@@ -63,11 +66,14 @@ def restore_db():
 def overview():
     plc = plc_connect('192.168.0.1', 0, 0)
     response = read_plc(plc)
-    plcdb_schema = PLCDBSchema(only=['tube_state_client'])
-    result = plcdb_schema.dump(response)
-    result = result['tube_state_client']
-    write_database(response_object, response, client)
-    return render_template('overview.html', values=result)
+    data = filter_tube_state(response.tubes_per_row,
+                             response.tubes_row_values)
+#    plcdb_schema = PLCDBSchema(only=['tube_state_client'])
+#    result = plcdb_schema.dump(response)
+#    result = result['tube_state_client']
+#    response_object['status'] = 'success'
+#    save_to_db(response_object, response, client)
+    return render_template('overview.html', values=data)
 
 
 @plc_blueprint.route('/plc/ping', methods=['GET'])

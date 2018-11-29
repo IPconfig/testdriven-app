@@ -67,13 +67,12 @@ def map_bytearray_with_layout(client, db_number, layout, _bytearray, size):
     return memObj
 
 
-def map_memory_to_dbo(memObj, filtered_tubes):
+def map_memory_to_dbo(memObj):
     dbo = Plc_db(
             tubes_per_row=memObj["tubes_per_row"],
             tube_ROW=memObj["tube_ROW"],
             tube_number_in_row=memObj["tube_number_in_row"],
             tube_state=memObj["tube_state"],
-            tube_state_client=filtered_tubes,
             total_tubes=memObj["total_tubes"],
             counter=memObj["counter"],
             debounce=memObj["debounce"],
@@ -138,8 +137,8 @@ def read_plc(client):
     _bytearray = client.db_read(db_number, 0, size)  # read plc data
     memObj = map_bytearray_with_layout(client, db_number,
                                        layout, _bytearray, size)
-    state_filter = filter_tube_state(memObj)  # add filtered state to memObj
-    dbo = map_memory_to_dbo(memObj, state_filter)
+ #   state_filter = filter_tube_state(memObj["tubes_per_row"], memObj["tube_state"])  # add filtered state to memObj
+    dbo = map_memory_to_dbo(memObj)
     return dbo
 
 
@@ -167,7 +166,7 @@ def write_plc(client):
 
     # read plc data, should be all zeroes after reboot
     _bytearray = client.db_read(db_number, 0, size)
-
+    # make a mapping of the bytearray data
     memObj = map_bytearray_with_layout(client, db_number,
                                        layout, _bytearray, size)
     dbo = Plc_db.query.filter_by(plc_id=1).first()
@@ -175,17 +174,14 @@ def write_plc(client):
     return memObj
 
 
-def filter_tube_state(memObj):
+def filter_tube_state(tubes_per_row, tubes_row_values):
     '''
     returns a list with a list of values per row
     Since the array is 10k elements originally,
     this will only list neccesary elements.
     This list will be passed to the client
     '''
-    tubes_per_row = memObj["tubes_per_row"]
-    tubes_row_values = memObj["tube_state"]
     result = []
-
     start = 0
     for tubes in tubes_per_row:
         _temp = [tubes_row_values[start:start + tubes]]
@@ -216,7 +212,6 @@ def write_database(response_object, dbo, client):
         reactor.tube_number_in_row = dbo.tube_number_in_row
         reactor.tube_state  = dbo.tube_state
         reactor.tubes_per_row = dbo.tubes_per_row
-        reactor.tube_state_client = dbo.tube_state_client
         db.session.add(reactor)
         db.session.commit()
         result = plc_db_to_object(reactor)

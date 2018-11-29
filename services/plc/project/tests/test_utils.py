@@ -2,9 +2,9 @@ from project.tests.base import BaseTestCase
 from project.api.utils import (map_bytearray_with_layout, filter_tube_state,
                                map_memory_to_dbo, map_dbo_to_memory)
 
-# create a reactor
-# [] []
-# [] []
+# create a 2x2 reactor
+# [4] [5]
+# [3] [2]
 _data = bytearray([
     0, 2, 0, 2,                         # tubes per row:        [2, 2]
     0, 1, 0, 1, 0, 2, 0, 2,             # tube Row:             [1, 1]
@@ -63,13 +63,11 @@ class TestUtils(BaseTestCase):
         _bytearray = _data
         memObj = map_bytearray_with_layout(self.client,
                                            db_number, layout, _bytearray, size)
-        filtered_tubes = [1, 2]
-        dbo = map_memory_to_dbo(memObj, filtered_tubes)
+        dbo = map_memory_to_dbo(memObj)
         self.assertEqual(dbo.tubes_per_row, memObj['tubes_per_row'])
         self.assertEqual(dbo.tube_ROW, memObj['tube_ROW'])
         self.assertEqual(dbo.tube_number_in_row, memObj['tube_number_in_row'])
         self.assertEqual(dbo.tube_state, memObj['tube_state'])
-        self.assertEqual(dbo.tube_state_client, [1, 2])
         self.assertEqual(dbo.total_tubes, memObj['total_tubes'])
         self.assertEqual(dbo.counter, memObj['counter'])
         self.assertEqual(dbo.debounce, memObj['debounce'])
@@ -95,5 +93,5 @@ class TestUtils(BaseTestCase):
         _bytearray = _data
         memObj = map_bytearray_with_layout(self.client,
                                            db_number, layout, _bytearray, size)
-        result = filter_tube_state(memObj)
-        self.assertEqual(result, [[4, 5], [3, 2]])
+        res = filter_tube_state(memObj['tubes_per_row'], memObj["tube_state"])
+        self.assertEqual(res, [[4, 5], [3, 2]])
