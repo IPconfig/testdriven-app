@@ -69,11 +69,7 @@ def overview():
     response = read_plc(plc)
     data = filter_tube_state(response.tubes_per_row,
                              response.tube_state)
-#    plcdb_schema = PLCDBSchema(only=['tube_state_client'])
-#    result = plcdb_schema.dump(response)
-#    result = result['tube_state_client']
-#    response_object['status'] = 'success'
-#    save_to_db(response, client)
+    save_to_db(plc, response)
     return render_template('overview.html', values=data)
 
 
