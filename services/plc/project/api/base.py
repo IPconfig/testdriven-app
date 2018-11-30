@@ -1,6 +1,6 @@
 # services/plc/project/api/base.py
 
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, make_response
 
 from project.api.models import Plc
 from project.api.utils import (plc_connect, read_plc, write_plc,
@@ -42,23 +42,24 @@ def get_status():
 
 @plc_blueprint.route('/plc/restore', methods=['GET'])
 def restore_db():
-    response_object = {
-        'status': 'fail',
-        'message': 'An error occured.'
-    }
+    headers = {'content-type': 'text/plain'}
+    response = make_response('An error occured.', 400)
+    response.headers = headers
     try:
         client = Plc.query.first()
         plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
         if plc is None:
-            response_object['message'] = 'Connection to PLC failed'
-            return jsonify(response_object), 400
+            headers = {'content-type': 'text/plain'}
+            response = make_response('Connection to PLC failed', 400)
+            response.headers = headers
+            return response
         else:
             write_plc(plc)
-            response_object['status'] = 'success'
-            response_object['message'] = 'dbo set to plc memory'
-            return jsonify(response_object), 200
+            response = make_response('backup restored to PLC', 200)
+            response.headers = headers
+            return response
     except Exception:
-        return jsonify(response_object), 400
+        return response
 
 
 # Route to the old layout
