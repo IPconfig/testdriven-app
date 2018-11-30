@@ -2,7 +2,7 @@
 
 from flask import Blueprint, jsonify, render_template
 
-from project.api.models import Plc, PLCDBSchema
+from project.api.models import Plc
 from project.api.utils import (plc_connect, read_plc, write_plc,
                                save_to_db, filter_tube_state)
 
@@ -32,11 +32,11 @@ def get_status():
             else:
                 data = filter_tube_state(dbo.tubes_per_row,
                                          dbo.tube_state)
+                response_object = save_to_db(client, dbo)
                 response_object['tube_values_filtered'] = data
-                response_object = save_to_db(response_object, dbo, client)
                 return jsonify(response_object), 200
                 plc.disconnect()
-    except Exception as e:
+    except Exception:
         return jsonify(response_object), 400
 
 
@@ -54,7 +54,6 @@ def restore_db():
             return jsonify(response_object), 400
         else:
             write_plc(plc)
-            plc.disconnect()
             response_object['status'] = 'success'
             response_object['message'] = 'dbo set to plc memory'
             return jsonify(response_object), 200
@@ -73,7 +72,7 @@ def overview():
 #    result = plcdb_schema.dump(response)
 #    result = result['tube_state_client']
 #    response_object['status'] = 'success'
-#    save_to_db(response_object, response, client)
+#    save_to_db(response, client)
     return render_template('overview.html', values=data)
 
 

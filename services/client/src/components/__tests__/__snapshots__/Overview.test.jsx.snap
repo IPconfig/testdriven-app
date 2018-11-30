@@ -1,14 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Overview renders a snapshot properly 1`] = `
-<div>
-  <h1
-    className="title is-1"
-  >
-    Reactor Overview
-  </h1>
-  <hr />
-  <br />
+<div
+  className="column has-text-centered"
+>
   <div
     className="reactor"
   >
@@ -17,148 +12,100 @@ exports[`Overview renders a snapshot properly 1`] = `
     >
       <div
         className="tube state2"
-      >
-        2
-      </div>
+      />
       <div
         className="tube state3"
-      >
-        3
-      </div>
+      />
     </div>
     <div
       className="reactor-row"
     >
       <div
         className="tube state1"
-      >
-        1
-      </div>
+      />
       <div
         className="tube state1"
-      >
-        1
-      </div>
+      />
       <div
         className="tube state1"
-      >
-        1
-      </div>
+      />
       <div
         className="tube state1"
-      >
-        1
-      </div>
+      />
     </div>
     <div
       className="reactor-row"
     >
       <div
         className="tube state2"
-      >
-        2
-      </div>
+      />
       <div
         className="tube state2"
-      >
-        2
-      </div>
+      />
       <div
         className="tube state2"
-      >
-        2
-      </div>
+      />
       <div
         className="tube state2"
-      >
-        2
-      </div>
+      />
     </div>
     <div
       className="reactor-row"
     >
       <div
         className="tube state3"
-      >
-        3
-      </div>
+      />
       <div
         className="tube state3"
-      >
-        3
-      </div>
+      />
       <div
         className="tube state3"
-      >
-        3
-      </div>
+      />
       <div
         className="tube state3"
-      >
-        3
-      </div>
+      />
     </div>
     <div
       className="reactor-row"
     >
       <div
         className="tube state4"
-      >
-        4
-      </div>
+      />
       <div
         className="tube state4"
-      >
-        4
-      </div>
+      />
       <div
         className="tube state4"
-      >
-        4
-      </div>
+      />
       <div
         className="tube state4"
-      >
-        4
-      </div>
+      />
     </div>
     <div
       className="reactor-row"
     >
       <div
         className="tube state5"
-      >
-        5
-      </div>
+      />
       <div
         className="tube state5"
-      >
-        5
-      </div>
+      />
       <div
         className="tube state5"
-      >
-        5
-      </div>
+      />
       <div
         className="tube state5"
-      >
-        5
-      </div>
+      />
     </div>
     <div
       className="reactor-row"
     >
       <div
         className="tube state0"
-      >
-        0
-      </div>
+      />
       <div
         className="tube state4"
-      >
-        4
-      </div>
+      />
     </div>
   </div>
 </div>

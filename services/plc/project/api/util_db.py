@@ -7,8 +7,6 @@ PLC bytearray data.
 I added the set and get for arrays myself
 """
 
-# TODO: set ARRAY and FARRAY values
-
 # flake8: noqa
 try:
     # try with the standard library

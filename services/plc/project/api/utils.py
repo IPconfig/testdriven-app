@@ -70,6 +70,13 @@ def map_bytearray_with_layout(db_number, layout, _bytearray, size):
 
 
 def map_memory_to_dbo(memObj):
+    '''
+    Converts read plc data into an object that can be stored in the database
+    Parameters
+    ----------
+    memObj : Object
+        Object of the plc data
+    '''
     dbo = Plc_db(
             tubes_per_row=memObj["tubes_per_row"],
             tube_ROW=memObj["tube_ROW"],
@@ -86,11 +93,19 @@ def map_memory_to_dbo(memObj):
 
 
 def map_dbo_to_memory(dbo, memObj):
+    '''
+    Converts database object into an object that can be written to the plc
+    Parameters
+    ----------
+    dbo : Object
+        Object from the database
+    memObj : Object
+        Object of the plc data
+    '''
     memObj["tubes_per_row"] = dbo.tubes_per_row
     memObj["tube_ROW"] = dbo.tube_ROW
     memObj["tube_number_in_row"] = dbo.tube_number_in_row
     memObj["tube_state"] = dbo.tube_state
-    # tube_state_client will not be written to plc memory
     memObj["total_tubes"] = dbo.total_tubes
     memObj["counter"] = dbo.counter
     memObj["debounce"] = dbo.debounce
@@ -117,8 +132,10 @@ def plc_db_to_object(dbo):
 def read_plc(client):
     '''
     Read memory of PLC and return a db object
-    Args:
-        client (object): Connected PLC object
+    Parameters
+    ----------
+        client : Object
+            Connected PLC object
     '''
     db_number = 7
     size = 62014
@@ -147,8 +164,10 @@ def read_plc(client):
 def write_plc(client):
     '''
     Read memory of PLC and return a db object
-    Args:
-        client (object): Connected PLC object
+    Parameters
+    ----------
+        client : Object
+            Connected PLC object
     '''
     db_number = 7
     size = 62014
@@ -171,9 +190,15 @@ def write_plc(client):
     # make a mapping of the bytearray data
     memObj = map_bytearray_with_layout(db_number,
                                        layout, _bytearray, size)
+
+    # Load data from postgress
     dbo = Plc_db.query.filter_by(plc_id=1).first()
-    memObj = map_dbo_to_memory(dbo, memObj)
-    return memObj
+    # map to memObject / layout specification
+    memObje = map_dbo_to_memory(dbo, memObj)
+    # Write the memObje to PLC
+    memObje.write(client)
+
+    return memObje
 
 
 def filter_tube_state(tubes_per_row, tubes_row_values):
@@ -192,7 +217,7 @@ def filter_tube_state(tubes_per_row, tubes_row_values):
     return result
 
 
-def save_to_db(response_object, dbo, client):
+def save_to_db(client, dbo):
     '''
     Saves a database object to the PLC Database
     '''
@@ -202,8 +227,10 @@ def save_to_db(response_object, dbo, client):
         db.session.add(dbo)
         db.session.commit()
         result = plc_db_to_object(dbo)
-        response_object['status'] = 'success'
-        response_object['message'] = 'PLC data saved in db'
+        response_object = {
+            'status': 'success',
+            'message': 'PLC data saved in db'
+        }
         response_object['plc_db'] = result
     else:
         # update values with new readings
@@ -220,7 +247,9 @@ def save_to_db(response_object, dbo, client):
         db.session.add(reactor)
         db.session.commit()
         result = plc_db_to_object(reactor)
-        response_object['status'] = 'success'
-        response_object['message'] = 'PLC data updated in db'
+        response_object = {
+            'status': 'success',
+            'message': 'PLC data updated in db'
+        }
         response_object['plc_db'] = result
     return response_object

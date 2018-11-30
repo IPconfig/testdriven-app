@@ -1,6 +1,9 @@
 from project.tests.base import BaseTestCase
+from project.api.models import Plc
+from project.tests.utils import add_plc
 from project.api.utils import (map_bytearray_with_layout, filter_tube_state,
-                               map_memory_to_dbo, map_dbo_to_memory)
+                               map_memory_to_dbo, map_dbo_to_memory,
+                               plc_db_to_object, save_to_db)
 
 # create a 2x2 reactor
 # [4] [5]
@@ -92,3 +95,27 @@ class TestUtils(BaseTestCase):
         memObj = map_bytearray_with_layout(db_number, layout, _bytearray, size)
         res = filter_tube_state(memObj['tubes_per_row'], memObj["tube_state"])
         self.assertEqual(res, [[4, 5], [3, 2]])
+
+    def test_save_to_db(self):
+        db_number = 1
+        size = 39
+        _bytearray = _data
+        memObj = map_bytearray_with_layout(db_number, layout, _bytearray, size)
+        add_plc('10.10.1.1', 0, 0)
+        client = Plc.query.first()
+        dbo = map_memory_to_dbo(memObj)
+        response_object = save_to_db(client, dbo)
+        dbo.plc_id = client.id  # add plc id as FK to dataset
+        result = plc_db_to_object(dbo)
+
+        self.assertEqual(response_object['plc_db'], result)
+        self.assertEqual(response_object['message'], 'PLC data saved in db')
+        self.assertEqual(response_object['status'], 'success')
+
+        dbo.tube_state = [1, 2, 3, 4]
+        response_object = save_to_db(client, dbo)
+        result = plc_db_to_object(dbo)
+
+        self.assertEqual(response_object['plc_db'], result)
+        self.assertEqual(response_object['message'], 'PLC data updated in db')
+        self.assertEqual(response_object['status'], 'success')
