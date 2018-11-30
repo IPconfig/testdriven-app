@@ -65,11 +65,12 @@ def restore_db():
 # Route to the old layout
 @plc_blueprint.route('/plc/overview', methods=['GET'])
 def overview():
-    plc = plc_connect('192.168.0.1', 0, 0)
-    response = read_plc(plc)
-    data = filter_tube_state(response.tubes_per_row,
-                             response.tube_state)
-    save_to_db(plc, response)
+    client = Plc.query.first()
+    plc = plc_connect(adress=client.ip, rack=client.rack, slot=client.slot)
+    dbo = read_plc(plc)
+    data = filter_tube_state(dbo.tubes_per_row,
+                             dbo.tube_state)
+    save_to_db(client, dbo)
     return render_template('overview.html', values=data)
 
 
