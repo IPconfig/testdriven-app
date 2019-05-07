@@ -1,5 +1,4 @@
-!/usr/bin/env bash
-#
+#!/usr/bin/env bash
 # Bash script to startup docker-compose
 
 declare -r DIR="/home/pi/app"
