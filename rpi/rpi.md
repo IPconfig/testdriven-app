@@ -24,7 +24,7 @@ There are a few steps to take to put these microservices on a raspberry pi.
 ```
 $ ssh pi@<<ipadress>>
 ```
-6. Upgrade the default packages: `apt-get update && apt-get upgrade -y`
+6. Upgrade the default packages: `sudo apt-get update && sudo apt-get upgrade -y`
 
 ## Install Docker
 Install Docker
@@ -33,8 +33,8 @@ Install Docker
 $ curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
 ```
 Install Docker-compose with pip
-2. `pip3 install docker-compose`
 1. `sudo apt-get install libssl-dev libffi-dev python3-pip -y`
+2. `sudo pip3 install docker-compose`
 
 ### Run Docker without using sudo all the time
 1. Add a docker group: `$ sudo groupadd docker`
