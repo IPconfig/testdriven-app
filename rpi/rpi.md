@@ -47,7 +47,12 @@ The following steps will setup the Raspberry Pi to start the app on startup. For
 1. Set eth0 to 192.168.0.10 (static). Don't configure the Router and DNS servers so these still work with DHCP and thus via wlan0
 ```
 echo '# Static IP' >> /etc/dhcpcd.conf
+echo 'interface eth0' >> /etc/dhcpcd.conf
+echo 'metric 300' >> /etc/dhcpcd.conf
 echo 'static ip_address=192.168.0.10' >> /etc/dhcpcd.conf
+
+echo 'interface wlan0' >> /etc/dhcpcd.conf
+echo 'metric 200' >> /etc/dhcpcd.conf
 ```
 2. Download the app
 ```
