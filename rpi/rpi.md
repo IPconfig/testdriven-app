@@ -33,8 +33,8 @@ Install Docker
 $ curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
 ```
 Install Docker-compose with pip
-1. `apt-get install python3-pip -y`
 2. `pip3 install docker-compose`
+1. `sudo apt-get install libssl-dev libffi-dev python3-pip -y`
 
 ### Run Docker without using sudo all the time
 1. Add a docker group: `$ sudo groupadd docker`
