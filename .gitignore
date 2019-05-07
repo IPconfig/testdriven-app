@@ -107,3 +107,4 @@ services/users/.vscode/settings.json
 
 # Node Modules
 node_modules
+.DS_Store
